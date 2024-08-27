@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+title: Sounder
+message: "Quickly play local music/sound."
+type: software
+authors:
+  - given-names: FJRG2007
+    email: fjrg2007@tpeoficial.com
+repository-code: 'https://github.com/FJRG2007/sounder'
+url: 'https://status.tpeoficial.com/development'
+abstract: >-
+  Quickly play local music/sound.
+keywords:
+  - sound
+  - player
+  - music
+license: AGPL-3.0-or-later
+version: Coming Soon

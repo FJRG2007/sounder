@@ -1,0 +1,19 @@
+# Python files.
+build
+venv
+env
+__pycache__
+
+# Project development files.
+.env
+notes
+
+# Customs folder.
+temp
+sounds/*
+!customs/Playlist Name/
+customs/Playlist Name/Sound Name.mp3
+
+# IDE configurations.
+.idea
+.vscode

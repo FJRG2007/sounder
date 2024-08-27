@@ -1,0 +1,7 @@
+{
+    "CDN_preference": [
+        "imgur",
+        "discordWebhook",
+        "discordBot"
+    ]
+}
