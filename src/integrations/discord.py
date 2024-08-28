@@ -28,7 +28,6 @@ def update_discord_presence(song_name, song_path):
             small_text=song_name,
             large_image=image,
             details="Enjoying some tunes!",
-            #large_image="your_image_key",
             start=int(time.time()),
             end=int(time.time()) + sound_data["duration"],
             buttons=[

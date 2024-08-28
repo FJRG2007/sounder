@@ -3,7 +3,7 @@ import src.lib.data as data
 from pygame import mixer
 from dotenv import load_dotenv
 import os, sys, time, random, pygame, pyfiglet, threading
-from src.integrations.discord import update_discord_presence
+from src.integrations.worker import update_all_presences
 from src.utils.basics import cls, quest, terminal, getSoundName
 
 # Initialize pygame and the sound mixer.
@@ -117,7 +117,7 @@ def play_song():
             is_playing = True
             song_name = getSoundName(os.path.basename(current_songs[current_song_index]))
             print(f"{cl.BOLD}⏯️ Currently Playing:{cl.ENDC} {song_name}")
-            update_discord_presence(song_name, current_songs[current_song_index])
+            update_all_presences(song_name, current_songs[current_song_index])
         except Exception as e: terminal("e", f"Error playing song: {e}")
     else: print("No songs to play.")
 

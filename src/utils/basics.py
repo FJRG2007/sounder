@@ -1,12 +1,11 @@
-from PIL import Image
 import src.lib.colors as cl
 from mutagen.mp3 import MP3
 from rich.panel import Panel
+import os, sys, time, traceback
 from rich.console import Console
 from rich import print as rprint
 from mutagen.id3 import ID3, APIC
 from rich.markdown import Markdown
-import os, sys, time, requests, threading, traceback
 
 console = Console()
 
