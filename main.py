@@ -41,16 +41,32 @@ def list_playlists():
         if (i + 1) % 3 == 0 and i != len(playlists) - 1: print(f" {cl.w}|")
     print(f" {cl.w}|")
 
-# Function to list songs in a playlist.
+# Function to list songs in a playlist and select one.
 def list_songs(playlist):
-    # Lists all songs in the given playlist.
-    songs = get_songs_from_playlist(playlist)
-    print(f"\nSongs in {playlist}:")
-    for i, song in enumerate(songs):
+    # Lists all songs in the given playlist and allows the user to select one.
+    global current_songs, current_song_index
+    current_songs = [os.path.join(playlist, song) for song in get_songs_from_playlist(playlist)]
+    print(f"\nSongs in {playlist.replace("\\", "/").rsplit("/", 1)[-1]}:")
+    for i, song in enumerate(current_songs):
         print(f"{cl.b}[{cl.w}{i+1}{cl.b}]{cl.w} {getSoundName(song)}")
         # Add separator for visual clarity every 3 items.
-        if (i + 1) % 3 == 0 and i != len(songs) - 1: print(f" {cl.w}|")
-    return songs
+        if (i + 1) % 3 == 0 and i != len(current_songs) - 1: print(f" {cl.w}|")
+    # Prompt user to select a song.
+    song_choice = quest("Enter the number of the song to play, or press Enter to skip selection", lowercase=True)
+    
+    # Check if a song number was chosen.
+    if song_choice.isdigit():
+        song_index = int(song_choice) - 1
+        if 0 <= song_index < len(current_songs): return current_songs, song_index  # Return the list of songs and the chosen index.
+        else:
+            print("Invalid song selection. Playing the first song.")
+            return current_songs, 0
+    else: return current_songs, None  # No selection was made, return None.
+
+def play_selected_song(song_index):
+    global current_song_index
+    if song_index is not None: current_song_index = song_index
+    play_song()
 
 # Function to handle playlist selection.
 def select_playlist():
@@ -165,7 +181,9 @@ def user_input_thread():
         elif command == 'v+': adjust_volume(0.1)
         elif command == 'v-': adjust_volume(-0.1)
         elif command == 's': toggle_shuffle()
-        elif command == 'l': list_songs(playlists[0])  # Assuming the first playlist is the current one.
+        elif command == 'l': 
+            songs, song_index = list_songs(playlists[0])  # Assuming the first playlist is the current one.
+            if song_index is not None: play_selected_song(song_index)
         elif command == 'b':
             select_playlist()
             if "all" not in playlists:

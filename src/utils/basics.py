@@ -69,7 +69,7 @@ def terminal(typeMessage, string="", exitScript=False, clear="n", newline=True, 
     if timer: time.sleep(2)
 
 def getSoundName(name) -> str:
-    return name.rsplit(".", 1)[0]
+    return name.replace("\\", "/").rsplit("/", 1)[-1].rsplit(".", 1)[0]
 
 def get_sound_data(sound_path):
     response = {"duration": None, "album_art_path": None}
