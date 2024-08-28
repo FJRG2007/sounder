@@ -1,9 +1,9 @@
+from pygame import mixer
 import src.lib.colors as cl
 import src.lib.data as data
-from pygame import mixer
 from dotenv import load_dotenv
-import os, sys, time, random, pygame, pyfiglet, threading
 from src.integrations.worker import update_all_presences
+import os, sys, time, random, pygame, pyfiglet, threading
 from src.utils.basics import cls, quest, terminal, getSoundName
 
 # Initialize pygame and the sound mixer.
@@ -61,7 +61,7 @@ def list_songs(playlist):
         else:
             print("Invalid song selection. Playing the first song.")
             return current_songs, 0
-    else: return current_songs, None  # No selection was made, return None.
+    else: return current_songs, 0  # Default to the first song if no selection is made.
 
 def play_selected_song(song_index):
     global current_song_index
@@ -215,18 +215,19 @@ if __name__ == "__main__":
     input_thread = threading.Thread(target=user_input_thread)
     input_thread.start()
 
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            handle_event(event)
+    try:
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT: running = False
+                handle_event(event)
 
-        # Check if the music has stopped playing.
-        if not mixer.music.get_busy() and is_playing and not stop_requested:
-            print("Music stopped, playing next song")  # Debug print.
-            next_song()
-
-        clock.tick(30)  # Limit the loop to 30 FPS.
-
-    input_thread.join()
-    pygame.quit()
+            # Check if the music has stopped playing.
+            if not mixer.music.get_busy() and is_playing and not stop_requested:
+                print("Music stopped, playing next song") # Debug print.
+                next_song()
+            clock.tick(30)  # Limit the loop to 30 FPS.
+    except KeyboardInterrupt: terminal("e", "Interrupted by user.")
+    finally:
+        stop_song()
+        pygame.quit()
+        input_thread.join()
