@@ -6,10 +6,6 @@ from src.integrations.worker import update_all_presences
 import os, sys, time, random, pygame, pyfiglet, threading
 from src.utils.basics import cls, quest, terminal, getSoundName
 
-# Initialize pygame and the sound mixer.
-pygame.init()
-mixer.init()
-
 # Path to the root folder containing playlists.
 root_folder = "./sounds"
 # Initialize playlists list.
@@ -74,11 +70,9 @@ def select_playlist():
     global playlists  # Declare playlists as global.
     list_playlists()
     playlist_choice = quest("Enter the number of the playlist to select, 'a' to play all songs randomly", lowercase=True)
-    if playlist_choice == "a": playlists.append("all")
+    if playlist_choice == "a": playlists = ["all"]
     else:
-        try:
-            selected_playlist = playlists[int(playlist_choice) - 1]
-            playlists = [os.path.join(root_folder, selected_playlist)]
+        try: playlists = [os.path.join(root_folder, playlists[int(playlist_choice) - 1])]
         except (IndexError, ValueError):
             print("Invalid selection.")
             exit()
@@ -119,6 +113,7 @@ def play_song():
             song_name = getSoundName(os.path.basename(current_songs[current_song_index]))
             print(f"{cl.BOLD}⏯️ Currently Playing:{cl.ENDC} {song_name}")
             update_all_presences(song_name, current_songs[current_song_index])
+        except pygame.error as e: terminal("e", f"Error loading or playing song: {e}")
         except Exception as e: terminal("e", f"Error playing song: {e}")
     else: print("No songs to play.")
 
@@ -176,23 +171,21 @@ def user_input_thread():
     while running:
         print("\nCommands: [p] Play Song, [n] Next Song, [v] Previous Song, [v+] Increase Volume, [v-] Decrease Volume, [s] Toggle Shuffle, [l] List Songs, [b] Back to Playlist Selection, [r] Restart Song, [x] Stop Song, [q] Quit")
         command = quest("Enter command", lowercase=True)
-        if command == 'p': play_song()
-        elif command == 'n': next_song()
-        elif command == 'v': prev_song()
-        elif command == 'v+': adjust_volume(0.1)
-        elif command == 'v-': adjust_volume(-0.1)
-        elif command == 's': toggle_shuffle()
-        elif command == 'l': 
-            songs, song_index = list_songs(playlists[0])  # Assuming the first playlist is the current one.
-            if song_index is not None: play_selected_song(song_index)
-        elif command == 'b':
+        if command == "p": play_song()
+        elif command == "n": next_song()
+        elif command == "v": prev_song()
+        elif command == "v+": adjust_volume(0.1)
+        elif command == "v-": adjust_volume(-0.1)
+        elif command == "s": toggle_shuffle()
+        elif command == "l": play_selected_song(song_index) if (song_index := list_songs(playlists[0])[1]) is not None else None
+        elif command == "b":
             select_playlist()
             if "all" not in playlists:
                 load_songs()
                 play_song()
         elif command == "x": stop_song()
-        elif command == 'r': restart_song()
-        elif command == 'q':
+        elif command == "r": restart_song()
+        elif command == "q":
             stop_song()
             running = False
         time.sleep(0.1)  # Small delay to prevent high CPU usage.
@@ -206,6 +199,9 @@ if __name__ == "__main__":
         terminal("e", "Sounder only works properly with Pytnon 3. Please upgrade/use Python 3.", exitScript=True)
         exit(1)
     load_dotenv(override=True)
+    # Initialize pygame and the sound mixer.
+    pygame.init()
+    mixer.init(frequency=22050, size=-16, channels=2, buffer=512)
     select_playlist()
     if "all" not in playlists:
         load_songs()
