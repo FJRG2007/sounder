@@ -107,7 +107,7 @@ def load_songs():
 
 def play_song():
     # Plays the current song.
-    global is_playing
+    global is_playing, stop_requested
     if current_songs:
         try:
             mixer.music.load(current_songs[current_song_index])
@@ -115,6 +115,7 @@ def play_song():
             mixer.music.play()
             mixer.music.set_endevent(SONG_END_EVENT) # Set the end event for song completion.
             is_playing = True
+            stop_requested = False
             song_name = getSoundName(os.path.basename(current_songs[current_song_index]))
             print(f"{cl.BOLD}⏯️ Currently Playing:{cl.ENDC} {song_name}")
             update_all_presences(song_name, current_songs[current_song_index])
