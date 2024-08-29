@@ -5,9 +5,10 @@ def get_function(module_name, function_name="main"):
 
 presences = ["discord"]
 
-def update_all_presences(song_name, song_path):
+def update_all_presences(status, sound_name="", sound_path=""):
     threads = []
     for presence in presences:
-        thread = threading.Thread(target=lambda presence=presence:get_function(presence, f"update_{presence}_presence")(song_name, song_path))
+        print(f"{"update" if status else "clear"}_{presence}_presence")
+        thread = threading.Thread(target=lambda presence=presence:get_function(presence, f"{"update" if status else "clear"}_{presence}_presence")(*(sound_name, sound_path) if status else ()))
         threads.append(thread)
         thread.start()

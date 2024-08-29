@@ -112,7 +112,7 @@ def play_song():
             stop_requested = False
             song_name = getSoundName(os.path.basename(current_songs[current_song_index]))
             print(f"{cl.BOLD}⏯️ Currently Playing:{cl.ENDC} {song_name}")
-            update_all_presences(song_name, current_songs[current_song_index])
+            update_all_presences(True, sound_name=song_name, sound_path=current_songs[current_song_index])
         except pygame.error as e: terminal("e", f"Error loading or playing song: {e}")
         except Exception as e: terminal("e", f"Error playing song: {e}")
     else: print("No songs to play.")
@@ -124,6 +124,7 @@ def stop_song():
         mixer.music.stop()
         is_playing = False
         stop_requested = True
+        update_all_presences(False)
         print("Song stopped.")
 
 def restart_song():
