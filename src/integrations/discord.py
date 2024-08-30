@@ -20,20 +20,19 @@ def update_discord_presence(song_name, song_path):
     if rpc is None: init_discord_presence()
     sound_data = get_sound_data(song_path)
     if sound_data["duration"] is None: return
-    image = upload_image_to_cdn(sound_data["album_art_path"], sound_data["duration"] + 15)
     try:
         rpc.update(
             state=song_name,
             large_text=song_name,
             small_text=song_name,
-            large_image=image,
+            large_image=upload_image_to_cdn(sound_data["album_art_path"], sound_data["duration"] + 15),
             details="Enjoying some tunes!",
             start=int(time.time()),
             end=int(time.time()) + sound_data["duration"],
             buttons=[
                 {
                     "label": "View on GitHub",
-                    "url": "https://github.com/FJRG2007/sounder" 
+                    "url": "https://github.com/FJRG2007/sounder"
                 }
             ]
         )

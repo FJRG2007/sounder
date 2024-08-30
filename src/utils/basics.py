@@ -55,7 +55,7 @@ def terminal(typeMessage, string="", exitScript=False, clear="n", newline=True, 
         if typeMessage == "nmi": print(f"\n{cl.R} ERROR {cl.w} Could not install {string}. Please install it manually.")
         if typeMessage == "nei": print(f"\n{cl.R} ERROR {cl.w} {string} is not installed or not found in PATH. Please install it manually.")
         if typeMessage == "l": print("\nThis may take a few seconds...")
-        if typeMessage == "info": console.print(Panel(Markdown(string), title="Snatch", title_align="left", expand=False, style="bold white"))
+        if typeMessage == "info": console.print(Panel(Markdown(string), title="Sounder", title_align="left", expand=False, style="bold white"))
         if typeMessage == "iom": 
             print(f"\n{cl.R} ERROR {cl.w} Please enter a valid option.")
             time.sleep(2)

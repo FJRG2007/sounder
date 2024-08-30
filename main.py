@@ -161,9 +161,7 @@ def toggle_shuffle():
 
 def handle_event(event):
     # Handles pygame events.
-    if event.type == SONG_END_EVENT:
-        print("Song ended event triggered")  # Debug print.
-        if not stop_requested: next_song()  # Play the next song if stop was not requested.
+    if event.type == SONG_END_EVENT and not stop_requested: next_song()  # Play the next song if stop was not requested.
 
 clock = pygame.time.Clock()
 
