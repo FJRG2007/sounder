@@ -3,5 +3,8 @@
         "imgur",
         "discordWebhook",
         "discordBot"
+    ],
+    "service_presences": [
+        "discord"
     ]
 }

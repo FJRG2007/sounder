@@ -41,5 +41,5 @@ def update_discord_presence(song_name, song_path):
 def clear_discord_presence():
     global rpc
     if rpc is not None:
-        try: rpc.clear()
+        try: rpc.close()
         except Exception as e: terminal("e", f"Error clearing Discord presence: {e}")
