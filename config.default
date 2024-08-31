@@ -1,0 +1,15 @@
+/*
+* Sounder by FJRG2007.
+* All default settings are the most optimal for Sounder.
+*/
+{
+    // Set your preferred preference order.
+    "CDN_preference": [
+        "imgur",
+        "discordWebhook",
+        "discordBot"
+    ],
+    "service_presences": [
+        "discord"
+    ]
+}
