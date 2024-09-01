@@ -222,8 +222,11 @@ if __name__ == "__main__":
                 print("Music stopped, playing next song") # Debug print.
                 next_song()
             clock.tick(30)  # Limit the loop to 30 FPS.
-    except KeyboardInterrupt: terminal("e", "Interrupted by user.")
+    except KeyboardInterrupt:
+        terminal("e", "Interrupted by user.")
+        update_all_presences(False)
     finally:
         stop_song()
+        update_all_presences(False)
         pygame.quit()
         input_thread.join()
