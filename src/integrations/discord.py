@@ -17,7 +17,7 @@ def init_discord_presence():
 
 def update_discord_presence(song_name, song_path, retries=2):
     global rpc
-    if rpc is None: init_discord_presence()
+    if rpc is None or rpc is False: init_discord_presence()
     sound_data = get_sound_data(song_path)
     if sound_data["duration"] is None: return
     while retries >= 0:
@@ -39,7 +39,7 @@ def update_discord_presence(song_name, song_path, retries=2):
             )
             break
         except RuntimeError as e:
-            if rpc is False: break
+            if rpc is False: return
             if "Event loop is closed" in str(e) and rpc:
                 terminal("w", "Event loop is closed. Attempting to reinitialize Discord presence...")
                 init_discord_presence()
