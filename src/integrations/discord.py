@@ -44,7 +44,7 @@ def update_discord_presence(song_name, song_path, retries=2):
                 terminal("w", "Event loop is closed. Attempting to reinitialize Discord presence...")
                 init_discord_presence()
                 retries -= 1
-                if retries < 0: terminal("e", "Failed to update Discord presence after retry attempts"); break
+                if retries < 0: terminal("e", "Failed to update Discord presence after retry attempts."); break
             else: terminal("e", f"Error updating Discord presence: {e}"); break
         except Exception as e: terminal("e", f"Error updating Discord presence: {e}"); break
 
