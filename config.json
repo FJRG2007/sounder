@@ -1,4 +1,7 @@
 {
+    "sounds_folder_path": "./sounds",
+    "quick_exit": true,
+    "macros": true,
     "CDN_preference": [
         "imgur",
         "discordWebhook",

@@ -17,7 +17,7 @@ def init_discord_presence():
 
 def update_discord_presence(song_name, song_path, retries=2):
     global rpc
-    if rpc is None or rpc is False: init_discord_presence()
+    if type(rpc) is not Presence: init_discord_presence()
     sound_data = get_sound_data(song_path)
     if sound_data["duration"] is None: return
     while retries >= 0:
@@ -50,7 +50,7 @@ def update_discord_presence(song_name, song_path, retries=2):
 
 def clear_discord_presence():
     global rpc
-    if rpc is not None and rpc is not False:
+    if type(rpc) is Presence:
         try: 
             rpc.close()
             rpc = False

@@ -1,0 +1,22 @@
+/*
+* Sounder by FJRG2007.
+* All default settings are the most optimal for Sounder.
+*/
+{
+    // Relative or absolute path to the folder with what you want to listen to.
+    "sounds_folder_path": "./sounds",
+    // Exit Sounder either abruptly or by closing components one by one (slower).
+    "quick_exit": true,
+    // Coming Soon: Control Sounder from your headphones or other devices.
+    "macros": true,
+    // Set your preferred preference order.
+    "CDN_preference": [
+        "imgur",
+        "discordWebhook",
+        "discordBot"
+    ],
+    // In case you have the auth configured; you will be able to share what you listen to!
+    "service_presences": [
+        "discord"
+    ]
+}
