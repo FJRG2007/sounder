@@ -162,7 +162,7 @@ clock = pygame.time.Clock()
 def user_input_thread():
     global running
     while running:
-        print("\nCommands: [p] Play sound, [n] Next sound, [v] Previous sound, [v+] Increase Volume, [v-] Decrease Volume, [s] Toggle Shuffle, [l] List sounds, [b] Back to Playlist Selection, [r] Restart sound, [x] Stop sound, [q] Quit")
+        print("\nCommands: [p] Play Sound, [n] Next Sound, [v] Previous Sound, [v+] Increase Volume, [v-] Decrease Volume, [s] Toggle Shuffle, [l] List Sounds, [b] Back to Playlist Selection, [r] Restart Sound, [x] Stop Sound, [q] Quit")
         command = quest("Enter command", lowercase=True)
         if command == "p": play_sound()
         elif command == "n": next_sound()
