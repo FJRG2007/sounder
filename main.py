@@ -41,7 +41,7 @@ def list_sounds(playlist):
     # Lists all sounds in the given playlist and allows the user to select one.
     global current_sounds, current_sound_index
     current_sounds = [os.path.join(playlist, sound) for sound in get_sounds_from_playlist(playlist)]
-    print(f"\nsounds in {playlist.replace("\\", "/").rsplit("/", 1)[-1]}:")
+    print(f"\nSounds in {playlist.replace("\\", "/").rsplit("/", 1)[-1]}:")
     for i, sound in enumerate(current_sounds):
         print(f"{cl.b}[{cl.w}{i+1}{cl.b}]{cl.w} {getSoundName(sound)}")
         # Add separator for visual clarity every 3 items.

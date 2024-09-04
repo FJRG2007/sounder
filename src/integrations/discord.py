@@ -15,19 +15,19 @@ def init_discord_presence():
             rpc.connect()
         except Exception as e: terminal("e", f"Error connecting to Discord Rich Presence: {e}")
 
-def update_discord_presence(song_name, song_path, retries=2):
+def update_discord_presence(sound_name, sound_path, retries=2):
     global rpc
     if type(rpc) is not Presence: init_discord_presence()
-    sound_data = get_sound_data(song_path)
+    sound_data = get_sound_data(sound_path)
     if sound_data["duration"] is None: return
     while retries >= 0:
         try:
             rpc.update(
-                state=song_name,
-                large_text=song_name,
-                small_text=song_name,
+                state=sound_data["sound_name"],
+                large_text=sound_data["sound_name"],
+                small_text=sound_data["sound_name"],
                 large_image=upload_image_to_cdn(sound_data["album_art_path"], sound_data["duration"] + 15),
-                details="Enjoying some tunes!",
+                details=sound_data["artist"],
                 start=int(time.time()),
                 end=int(time.time()) + sound_data["duration"],
                 buttons=[

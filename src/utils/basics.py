@@ -4,8 +4,8 @@ from rich.panel import Panel
 import os, sys, time, traceback
 from rich.console import Console
 from rich import print as rprint
-from mutagen.id3 import ID3, APIC
 from rich.markdown import Markdown
+from mutagen.id3 import ID3, APIC, TIT2, TPE1
 
 console = Console()
 
@@ -71,33 +71,45 @@ def getSoundName(name) -> str:
     return name.replace("\\", "/").rsplit("/", 1)[-1].rsplit(".", 1)[0]
 
 def get_sound_data(sound_path):
-    response = {"duration": None, "album_art_path": None}
+    response = {
+        "duration": None, 
+        "album_art_path": None,
+        "artist": None,
+        "sound_name": None
+    }
     try:
         # Get sound duration.
         response["duration"] = int(MP3(sound_path).info.length)
-        # Get album art.
+        # Get artist and song name.
         try:
             audio_id3 = ID3(sound_path)
+            response["sound_name"] = audio_id3.get(TIT2, "unknown").text[0] if audio_id3.get(TIT2) else getSoundName(sound_path)
+            response["artist"] = audio_id3.get(TPE1, "unknown").text[0] if audio_id3.get(TPE1) else "Enjoying the sound"
+        except Exception as e:
+            print(f"Error extracting artist/sound name: {e}")
+            traceback.print_exc()
+            response["artist"] = "unknown_artist"
+            response["sound_name"] = "unknown_sound"
+        # Get album art.
+        try:
             for frame in audio_id3.values():
                 if isinstance(frame, APIC):
                     album_art_data = frame.data
                     break
             else: album_art_data = None
             if album_art_data:
-                song_name = MP3(sound_path).tags.get("TIT2", "unknown").text[0]
-                if not song_name: song_name = "unknown_song"
-                image_filename = f"temp/{song_name}.jpg"
+                image_filename = f"temp/{response['sound_name']}.jpg"
                 if os.path.isfile(image_filename): response["album_art_path"] = image_filename
                 else: 
                     os.makedirs("temp", exist_ok=True)
-                    with open("temp/image.jpg", "wb") as temp_file:
+                    with open(image_filename, "wb") as temp_file:
                         temp_file.write(album_art_data)
-                response["album_art_path"] = "temp/image.jpg"
-            else: print("No album art found.")
+                    response["album_art_path"] = image_filename
         except Exception as e:
-            terminal("e", f"Error extracting album art: {e}")
+            print(f"Error extracting album art: {e}")
+            traceback.print_exc()
             response["album_art_path"] = None
     except Exception as e:
-        terminal("e", f"Error extracting sound data: {e}")
-        traceback.print_exc()  # Print stack trace for debugging purposes
+        print(f"Error extracting sound data: {e}")
+        traceback.print_exc()  # Print stack trace for debugging purposes.
     return response
