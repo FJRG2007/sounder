@@ -80,7 +80,7 @@ def get_sound_data(sound_path):
     try:
         # Get sound duration.
         response["duration"] = int(MP3(sound_path).info.length)
-        # Get artist and song name.
+        # Get artist and sound name.
         try:
             audio_id3 = ID3(sound_path)
             response["sound_name"] = audio_id3.get(TIT2, "unknown").text[0] if audio_id3.get(TIT2) else getSoundName(sound_path)
