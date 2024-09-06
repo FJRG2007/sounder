@@ -1,23 +1,31 @@
 import os, time
-from pypresence import Presence
+from pypresence import Presence, PyPresenceException
 from src.utils.basics import terminal, get_sound_data
 from src.cdn_uploader.worker import upload_image_to_cdn
 
 # Global variable to hold the RPC instance.
 rpc = None
 
+DiscordNotInstalledError = False
+
 def init_discord_presence():
-    global rpc
+    global rpc, DiscordNotInstalledError
     DISCORD_CLIENT_ID = os.getenv("DISCORD_CLIENT_ID")
     if DISCORD_CLIENT_ID and len(DISCORD_CLIENT_ID) > 5:
         try:
             rpc = Presence(DISCORD_CLIENT_ID)
             rpc.connect()
-        except Exception as e: terminal("e", f"Error connecting to Discord Rich Presence: {e}")
+        except Exception as e:
+            if "Could not find Discord installed" in str(e) and not DiscordNotInstalledError:
+                DiscordNotInstalledError = True
+                rpc = False
+                terminal("w", f"Discord is closed or not installed.")
+            else: terminal("e", f"Error connecting to Discord Rich Presence: {e}")
 
 def update_discord_presence(sound_name, sound_path, retries=2):
-    global rpc
+    global rpc, DiscordNotInstalledError
     if type(rpc) is not Presence: init_discord_presence()
+    if DiscordNotInstalledError: return
     sound_data = get_sound_data(sound_path)
     if sound_data["duration"] is None: return
     while retries >= 0:
