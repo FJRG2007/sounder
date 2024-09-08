@@ -9,6 +9,8 @@
     "quick_exit": true,
     // Coming Soon: Control Sounder from your headphones or other devices.
     "macros": true,
+    // Enables or disables presence in all integrations.
+    "presences": true,
     // Set your preferred preference order.
     "CDN_preference": [
         "imgur",
