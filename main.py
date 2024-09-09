@@ -16,9 +16,6 @@ SOUND_END_EVENT = pygame.USEREVENT + 1
 current_sound_index = 0
 is_shuffled = False
 volume = 1.0 # Default maximum volume.
-# current_sounds = []
-# is_playing = False # To track if a sound is currently playing.
-# stop_requested = False  # To track if stop has been requested.
 
 # Function to get list of playlists (directories) or sounds (files).
 def get_playlists_or_sounds():
