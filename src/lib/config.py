@@ -1,6 +1,8 @@
-import json
+import json,importlib
 from types import SimpleNamespace
-from src.utils.basics import terminal
+
+def get_function(function_name="main"):
+    return getattr(importlib.import_module(f"src.utils.basics"), function_name)
 
 class Config:
 
@@ -41,4 +43,4 @@ class Config:
 config = None
 
 try: config = Config()
-except Exception as e: terminal("e", e, exitScript=True)
+except Exception as e: get_function("terminal")("e", e, exitScript=True)

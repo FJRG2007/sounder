@@ -6,7 +6,7 @@ from src.lib.config import config
 from src.integrations.macros import start_macros
 from src.integrations.worker import update_all_presences
 from src.utils.basics import cls, quest, terminal, getSoundName
-import os, sys, time, random, signal, globals, pygame, pyfiglet, threading
+import os, sys, time, random, signal, src.lib.globals as globals, pygame, pyfiglet, warnings, platform, threading
 
 # Initialize playlists list.
 playlists = []
@@ -16,10 +16,11 @@ SOUND_END_EVENT = pygame.USEREVENT + 1
 current_sound_index = 0
 is_shuffled = False
 volume = 1.0 # Default maximum volume.
+clock = pygame.time.Clock()
 
 # Function to get list of playlists (directories) or sounds (files).
 def get_playlists_or_sounds():
-    return [name for name in os.listdir(config.sounds_folder_path) if os.path.isdir(os.path.join(config.sounds_folder_path, name)) and name != "Playlist Name"]
+    return [name for name in os.listdir(config.general.sounds_folder_path) if os.path.isdir(os.path.join(config.general.sounds_folder_path, name)) and name != "Playlist Name"]
 
 # Function to get list of sounds from a playlist (directory).
 def get_sounds_from_playlist(playlist):
@@ -56,11 +57,11 @@ def list_sounds(playlist):
     # Check if a sound number was chosen.
     if sound_choice.isdigit():
         sound_index = int(sound_choice) - 1
-        if 0 <= sound_index < len(globals.current_sounds): return globals.current_sounds, sound_index  # Return the list of sounds and the chosen index.
+        if 0 <= sound_index < len(globals.current_sounds): return globals.current_sounds, sound_index # Return the list of sounds and the chosen index.
         else:
             terminal("e", "Invalid sound selection. Playing the first sound.")
             return globals.current_sounds, 0
-    else: return globals.current_sounds, 0  # Default to the first sound if no selection is made.
+    else: return globals.current_sounds, 0 # Default to the first sound if no selection is made.
 
 def play_selected_sound(sound_index):
     global current_sound_index
@@ -74,7 +75,7 @@ def select_playlist():
         playlist_choice = quest("Enter the number of the playlist to select, 'a' to play all sounds randomly", lowercase=True)
         if playlist_choice == "a": playlists = ["all"]; break
         else:
-            try: playlists = [os.path.join(config.sounds_folder_path, playlists[int(playlist_choice) - 1])]; break
+            try: playlists = [os.path.join(config.general.sounds_folder_path, playlists[int(playlist_choice) - 1])]; break
             except (IndexError, ValueError): terminal("e", "Invalid selection. Please try again.")
 
 def load_sounds():
@@ -83,7 +84,7 @@ def load_sounds():
     globals.current_sounds = []
     for playlist in playlists:
         if playlist == "all":
-            for dirpath, _, filenames in os.walk(config.sounds_folder_path):
+            for dirpath, _, filenames in os.walk(config.general.sounds_folder_path):
                 globals.current_sounds.extend([os.path.join(dirpath, sound) for sound in filenames if sound.endswith(".mp3")])
         else: globals.current_sounds.extend([os.path.join(playlist, sound) for sound in get_sounds_from_playlist(playlist)])
     if not globals.current_sounds: return terminal("e", "No sounds found in the selected playlists.", exitScript=True)
@@ -104,7 +105,7 @@ def play_sound():
             update_all_presences(True, sound_name=sound_name, sound_path=globals.current_sounds[current_sound_index])
         except pygame.error as e: terminal("e", f"Error loading or playing sound: {e}")
         except Exception as e: terminal("e", f"Error playing sound: {e}")
-    else: print("No sounds to play.")
+    else: terminal("e", "No sounds to play.")
 
 def stop_sound():
     # Stops the current sound.
@@ -150,9 +151,7 @@ def toggle_shuffle():
 
 def handle_event(event):
     # Handles pygame events.
-    if event.type == SOUND_END_EVENT and not stop_requested: next_sound()  # Play the next sound if stop was not requested.
-
-clock = pygame.time.Clock()
+    if event.type == SOUND_END_EVENT and not globals.stop_requested: next_sound() # Play the next sound if stop was not requested.
 
 def user_input_thread():
     global running
@@ -174,7 +173,7 @@ def user_input_thread():
         elif command == "x": stop_sound()
         elif command == "r": restart_sound()
         elif command == "q":
-            if config.quick_exit: os._exit(0)
+            if config.general.quick_exit: os._exit(0)
             else: stop_sound()
             running = False
             break
@@ -182,7 +181,7 @@ def user_input_thread():
 
 def signal_handler(sig, frame):
     global running
-    if config.quick_exit: os._exit(0)
+    if config.general.quick_exit: os._exit(0)
     else:
         running = False
         stop_sound()
@@ -191,12 +190,18 @@ def signal_handler(sig, frame):
         sys.exit(0)
 
 if __name__ == "__main__":
+    # Production only.
+    warnings.filterwarnings("ignore", category=ResourceWarning, module="asyncio")
     # Banner
     cls()
     print(pyfiglet.figlet_format("SOUNDER"))
     print(f'\n{cl.des_space}{cl.b}>> {cl.w}Welcome to Sounder, remember to use it responsibly. \n{cl.des_space}{cl.b}>> {cl.w}Join to our Discord server on tpe.li/dsc\n{cl.des_space}{cl.b}>> {cl.w}Version: {data.version}\n')
     if not sys.version[0] in "3":
         terminal("e", "Sounder only works properly with Pytnon 3. Please upgrade/use Python 3.", exitScript=True)
+        exit(1)
+    current_os = platform.system()
+    if current_os not in ["Linux", "Darwin", "Windows"]:
+        terminal("e", f"Sounder macros only support Linux, macOS, and Windows. Your OS ({current_os}) is not supported.", exitScript=True)
         exit(1)
     load_dotenv(override=True)
 
@@ -221,14 +226,14 @@ if __name__ == "__main__":
                 if event.type == pygame.QUIT: running = False
                 handle_event(event)
             # Check if the music has stopped playing.
-            if not mixer.music.get_busy() and is_playing and not stop_requested: next_sound()
+            if not mixer.music.get_busy() and globals.is_playing and not globals.stop_requested: next_sound()
             clock.tick(30) # Limit the loop to 30 FPS.
     except (KeyboardInterrupt, EOFError):
         terminal("e", "Interrupted by user.")
-        if config.quick_exit: os._exit(0)
+        if config.general.quick_exit: os._exit(0)
         else: update_all_presences(False)
     finally:
-        if config.quick_exit: os._exit(0)
+        if config.general.quick_exit: os._exit(0)
         else:
             stop_sound()
             update_all_presences(False)

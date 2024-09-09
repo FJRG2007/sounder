@@ -4,6 +4,7 @@ from rich.panel import Panel
 import os, sys, time, traceback
 from rich.console import Console
 from rich import print as rprint
+from src.lib.config import config
 from rich.markdown import Markdown
 from mutagen.id3 import ID3, APIC, TIT2, TPE1
 
@@ -27,9 +28,13 @@ def quest(prompt, newline=False, lowercase=False, tab=False, format_type=str):
     while True:
         try:
             response = input(f"{prefix}{cl.b}[{cl.w}?{cl.b}]{cl.w} {prompt}: ")
-            if format_type == int: return int(response)
-            elif format_type == str and lowercase: return response.lower()
-            return response
+            if format_type == int: value = int(response)
+            elif format_type == str and lowercase: value = response.lower()
+            else: value = response
+            if config.general.clear_on_quest: 
+                cls()
+                time.sleep(0.25)
+            return value
         except (ValueError, EOFError): terminal("e", "Enter a valid value.", timer=True)
 
 def getPositive(q, default=True) -> bool:

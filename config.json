@@ -1,14 +1,22 @@
 {
-    "sounds_folder_path": "./sounds",
-    "quick_exit": true,
-    "macros": true,
-    "presences": true,
-    "CDN_preference": [
-        "imgur",
-        "discordWebhook",
-        "discordBot"
-    ],
-    "service_presences": [
-        "discord"
-    ]
+    "general": {
+        "sounds_folder_path": "./sounds",
+        "quick_exit": true,
+        "clear_on_quest": false
+    },
+    "macros": {
+        "status": true,
+        "prioritize_media_buttons": true
+    },
+    "presences": {
+        "status": true,
+        "cdns": [
+            "imgur",
+            "discordWebhook",
+            "discordBot"
+        ],
+        "services": [
+            "discord"
+        ]
+    }
 }

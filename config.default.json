@@ -3,22 +3,33 @@
 * All default settings are the most optimal for Sounder.
 */
 {
-    // Relative or absolute path to the folder with what you want to listen to.
-    "sounds_folder_path": "./sounds",
-    // Exit Sounder either abruptly or by closing components one by one (slower).
-    "quick_exit": true,
+    "general": {
+        // Relative or absolute path to the folder with what you want to listen to.
+        "sounds_folder_path": "./sounds",
+        // Exit Sounder either abruptly or by closing components one by one (slower).
+        "quick_exit": true,
+        // Clear terminal after each question. [Adversely affects quest performance].
+        "clear_on_quest": false
+    },
     // Control Sounder from your headphones or other devices.
-    "macros": true,
+    "macros": {
+        // Status of Sounder macros.
+        "status": true,
+        // Linux only: If the macro button for Sounder is enabled, it will only respond to it and not to other programs (macros).
+        "prioritize_media_buttons": true
+    },
     // Enables or disables presence in all integrations.
-    "presences": true,
-    // Set your preferred preference order.
-    "CDN_preference": [
-        "imgur",
-        "discordWebhook",
-        "discordBot"
-    ],
-    // In case you have the auth configured; you will be able to share what you listen to!
-    "service_presences": [
-        "discord"
-    ]
+    "presences": {
+        "status": true,
+        // Set your preferred preference order.
+        "cdns": [
+            "imgur",
+            "discordWebhook",
+            "discordBot"
+        ],
+        // In case you have the auth configured; you will be able to share what you listen to!
+        "services": [
+            "discord"
+        ]
+    }
 }

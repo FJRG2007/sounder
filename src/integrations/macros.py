@@ -1,5 +1,6 @@
+from src.lib.config import config
 from src.utils.basics import terminal
-import time, globals, platform, threading, importlib
+import time, src.lib.globals as globals, platform, threading, importlib
 try: from evdev import InputDevice, list_devices, ecodes
 except ImportError: InputDevice = list_devices = ecodes = None
 from pynput import keyboard
@@ -28,6 +29,7 @@ def get_function(function_name="main"):
 def macros_button_listener_linux(device_path):
     try:
         device = InputDevice(device_path)
+        if config.macros.prioritize_media_buttons: device.grab() # Grab the device exclusively so that the system doesn't receive the events.
         for event in device.read_loop():
             if event.type == ecodes.EV_KEY and event.value == 1: # Key press.
                 function_name = {
@@ -53,10 +55,14 @@ def on_press(key):
     except Exception as e: terminal("e", f"Error in keyboard listener: {e}")
 
 def start_macros():
+    if not config.macros.status: return
     os_name = platform.system()
     if os_name == "Linux" and evdev:
         macros_device_path = find_macros_device_linux()
         if macros_device_path: threading.Thread(target=macros_button_listener_linux, args=(macros_device_path,)).start()
     elif os_name in ["Darwin", "Windows"]:
-        with keyboard.Listener(on_press=on_press) as listener:
-            listener.join()
+        try:
+            with keyboard.Listener(on_press=on_press) as listener:
+                listener.join()
+        except Exception as e: terminal("e", f"Error in keyboard listener: {e}")
+        finally: listener.stop()
