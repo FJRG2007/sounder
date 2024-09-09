@@ -7,3 +7,30 @@
   <br />
   <hr />
 </div>
+
+### Use (Still in development)
+
+First clone the repository:
+```bash
+$ git clone https://github.com/FJRG2007/sounder.git
+$ cd sounder
+```
+
+Now install the requirements:
+```bash
+$ pip install -r requirements.txt
+```
+
+> [!NOTE]\
+> Remember to create your playlists as folders and download your sounds in mp3!.
+
+```txt
+📦sounds
+ ┗ 📂Playlist Name
+ ┃ ┗ 📜Sound Name.mp3
+```
+
+Then, replace the `.env.example` file to `.env` and fill in the tokens you need.
+```bash
+$ python main.py
+```
