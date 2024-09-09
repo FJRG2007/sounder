@@ -78,7 +78,7 @@ def getSoundName(name) -> str:
 def get_sound_data(sound_path):
     response = {
         "duration": None, 
-        "album_art_path": None,
+        "album_art_path": "./defaults/album_art_path.png",
         "artist": None,
         "sound_name": None
     }
@@ -91,10 +91,11 @@ def get_sound_data(sound_path):
             response["sound_name"] = audio_id3.get(TIT2, "unknown").text[0] if audio_id3.get(TIT2) else getSoundName(sound_path)
             response["artist"] = audio_id3.get(TPE1, "unknown").text[0] if audio_id3.get(TPE1) else "Enjoying the sound"
         except Exception as e:
-            print(f"Error extracting artist/sound name: {e}")
-            traceback.print_exc()
-            response["artist"] = "unknown_artist"
-            response["sound_name"] = "unknown_sound"
+            if config.general.developer_mode:
+                terminal("e", f"Error extracting artist/sound name: {e}")
+                traceback.print_exc()
+            response["artist"] = "Unknown Artist"
+            response["sound_name"] = getSoundName(sound_path)
         # Get album art.
         try:
             for frame in audio_id3.values():
@@ -111,9 +112,10 @@ def get_sound_data(sound_path):
                         temp_file.write(album_art_data)
                     response["album_art_path"] = image_filename
         except Exception as e:
-            print(f"Error extracting album art: {e}")
-            traceback.print_exc()
-            response["album_art_path"] = None
+            if config.general.developer_mode:
+                print(f"Error extracting album art: {e}")
+                traceback.print_exc()
+            response["album_art_path"] = "./defaults/album_art_path.png"
     except Exception as e:
         print(f"Error extracting sound data: {e}")
         traceback.print_exc()  # Print stack trace for debugging purposes.

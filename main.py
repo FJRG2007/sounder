@@ -44,7 +44,7 @@ def list_playlists():
 # Function to list sounds in a playlist and select one.
 def list_sounds(playlist):
     # Lists all sounds in the given playlist and allows the user to select one.
-    global current_sounds, current_sound_index
+    current_sound_index
     globals.current_sounds = [os.path.join(playlist, sound) for sound in get_sounds_from_playlist(playlist)]
     print(f"\nSounds in {playlist.replace("\\", "/").rsplit("/", 1)[-1]}:")
     for i, sound in enumerate(globals.current_sounds):
@@ -80,7 +80,6 @@ def select_playlist():
 
 def load_sounds():
     # Loads sounds from selected playlists.
-    global current_sounds
     globals.current_sounds = []
     for playlist in playlists:
         if playlist == "all":
@@ -115,7 +114,7 @@ def stop_sound():
         globals.stop_requested = True
         update_all_presences(False)
         print("Sound stopped.")
-    except Exception as e: terminal("e", f"Error stopping")
+    except Exception as e: terminal("e", f"Error stopping.")
 
 def restart_sound():
     # Restarts the current sound from the beginning.
@@ -139,7 +138,7 @@ def prev_sound():
 def adjust_volume(amount):
     # Adjusts the volume by a given amount (positive or negative).
     global volume
-    volume = max(0.0, min(1.0, volume + amount))  # Ensure volume stays between 0.0 and 1.0.
+    volume = max(0.0, min(1.0, volume + amount)) # Ensure volume stays between 0.0 and 1.0.
     mixer.music.set_volume(volume)
     print(f"Volume: {int(volume * 100)}%")
 
@@ -177,7 +176,7 @@ def user_input_thread():
             else: stop_sound()
             running = False
             break
-        time.sleep(0.1)  # Small delay to prevent high CPU usage.
+        time.sleep(0.1) # Small delay to prevent high CPU usage.
 
 def signal_handler(sig, frame):
     global running
@@ -191,7 +190,7 @@ def signal_handler(sig, frame):
 
 if __name__ == "__main__":
     # Production only.
-    warnings.filterwarnings("ignore", category=ResourceWarning, module="asyncio")
+    if not config.general.developer_mode: warnings.filterwarnings("ignore", category=ResourceWarning, module="asyncio")
     # Banner
     cls()
     print(pyfiglet.figlet_format("SOUNDER"))

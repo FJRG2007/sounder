@@ -2,7 +2,8 @@
     "general": {
         "sounds_folder_path": "./sounds",
         "quick_exit": true,
-        "clear_on_quest": false
+        "clear_on_quest": false,
+        "developer_mode": false
     },
     "macros": {
         "status": true,

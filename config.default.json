@@ -9,7 +9,9 @@
         // Exit Sounder either abruptly or by closing components one by one (slower).
         "quick_exit": true,
         // Clear terminal after each question. [Adversely affects quest performance].
-        "clear_on_quest": false
+        "clear_on_quest": false,
+        // In case you want to see more error logs.
+        "developer_mode": false
     },
     // Control Sounder from your headphones or other devices.
     "macros": {

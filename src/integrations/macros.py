@@ -13,8 +13,6 @@ def get_function(function_name="main"):
     if current_time - last_call_time < 0.7: return lambda: None # Return a lambda that does nothing.
     # Update the timestamp of the last function call.
     last_call_time = current_time
-    if function_name in {"play_sound", "next_sound"}: globals.is_playing = True
-    elif function_name == "stop_sound": globals.is_playing = False
     try:
         module = importlib.import_module("main")
         func = getattr(module, function_name, lambda: None)
@@ -48,7 +46,8 @@ def on_press(key):
     try:
         function_name = {
             keyboard.Key.media_play_pause: "play_sound" if not globals.is_playing else "stop_sound",
-            keyboard.Key.media_next: "next_sound"
+            keyboard.Key.media_next: "next_sound",
+            keyboard.Key.media_previous: "prev_sound"
         }.get(key)
         if function_name: get_function(function_name)()
     except ZeroDivisionError: pass
@@ -56,13 +55,16 @@ def on_press(key):
 
 def start_macros():
     if not config.macros.status: return
-    os_name = platform.system()
-    if os_name == "Linux" and evdev:
-        macros_device_path = find_macros_device_linux()
-        if macros_device_path: threading.Thread(target=macros_button_listener_linux, args=(macros_device_path,)).start()
-    elif os_name in ["Darwin", "Windows"]:
-        try:
-            with keyboard.Listener(on_press=on_press) as listener:
-                listener.join()
-        except Exception as e: terminal("e", f"Error in keyboard listener: {e}")
-        finally: listener.stop()
+    def run_macros():
+        os_name = platform.system()
+        if os_name == "Linux" and evdev:
+            macros_device_path = find_macros_device_linux()
+            if macros_device_path: threading.Thread(target=macros_button_listener_linux, args=(macros_device_path,)).start()
+        elif os_name in ["Darwin", "Windows"]:
+            try:
+                with keyboard.Listener(on_press=on_press) as listener:
+                    listener.join()
+            except Exception as e: terminal("e", f"Error in keyboard listener: {e}")
+            finally: listener.stop()
+    # Run the above logic in a separate thread.
+    threading.Thread(target=run_macros).start()
