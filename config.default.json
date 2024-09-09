@@ -7,7 +7,7 @@
     "sounds_folder_path": "./sounds",
     // Exit Sounder either abruptly or by closing components one by one (slower).
     "quick_exit": true,
-    // Coming Soon: Control Sounder from your headphones or other devices.
+    // Control Sounder from your headphones or other devices.
     "macros": true,
     // Enables or disables presence in all integrations.
     "presences": true,

@@ -3,15 +3,22 @@ import src.lib.colors as cl
 import src.lib.data as data
 from dotenv import load_dotenv
 from src.lib.config import config
-# from src.integrations.macros import start_macros
+from src.integrations.macros import start_macros
 from src.integrations.worker import update_all_presences
 from src.utils.basics import cls, quest, terminal, getSoundName
-import os, sys, time, random, signal, pygame, pyfiglet, threading
+import os, sys, time, random, signal, globals, pygame, pyfiglet, threading
 
 # Initialize playlists list.
 playlists = []
 # Custom event for sound end.
 SOUND_END_EVENT = pygame.USEREVENT + 1
+# State variables.
+current_sound_index = 0
+is_shuffled = False
+volume = 1.0 # Default maximum volume.
+# current_sounds = []
+# is_playing = False # To track if a sound is currently playing.
+# stop_requested = False  # To track if stop has been requested.
 
 # Function to get list of playlists (directories) or sounds (files).
 def get_playlists_or_sounds():
@@ -40,23 +47,23 @@ def list_playlists():
 def list_sounds(playlist):
     # Lists all sounds in the given playlist and allows the user to select one.
     global current_sounds, current_sound_index
-    current_sounds = [os.path.join(playlist, sound) for sound in get_sounds_from_playlist(playlist)]
+    globals.current_sounds = [os.path.join(playlist, sound) for sound in get_sounds_from_playlist(playlist)]
     print(f"\nSounds in {playlist.replace("\\", "/").rsplit("/", 1)[-1]}:")
-    for i, sound in enumerate(current_sounds):
+    for i, sound in enumerate(globals.current_sounds):
         print(f"{cl.b}[{cl.w}{i+1}{cl.b}]{cl.w} {getSoundName(sound)}")
         # Add separator for visual clarity every 3 items.
-        if (i + 1) % 3 == 0 and i != len(current_sounds) - 1: print(f" {cl.w}|")
+        if (i + 1) % 3 == 0 and i != len(globals.current_sounds) - 1: print(f" {cl.w}|")
     # Prompt user to select a sound.
     sound_choice = quest("Enter the number of the sound to play, or press Enter to skip selection", lowercase=True)
     
     # Check if a sound number was chosen.
     if sound_choice.isdigit():
         sound_index = int(sound_choice) - 1
-        if 0 <= sound_index < len(current_sounds): return current_sounds, sound_index  # Return the list of sounds and the chosen index.
+        if 0 <= sound_index < len(globals.current_sounds): return globals.current_sounds, sound_index  # Return the list of sounds and the chosen index.
         else:
             terminal("e", "Invalid sound selection. Playing the first sound.")
-            return current_sounds, 0
-    else: return current_sounds, 0  # Default to the first sound if no selection is made.
+            return globals.current_sounds, 0
+    else: return globals.current_sounds, 0  # Default to the first sound if no selection is made.
 
 def play_selected_sound(sound_index):
     global current_sound_index
@@ -73,53 +80,44 @@ def select_playlist():
             try: playlists = [os.path.join(config.sounds_folder_path, playlists[int(playlist_choice) - 1])]; break
             except (IndexError, ValueError): terminal("e", "Invalid selection. Please try again.")
 
-# State variables.
-current_sound_index = 0
-is_shuffled = False
-volume = 1.0 # Default maximum volume.
-current_sounds = []
-is_playing = False # To track if a sound is currently playing.
-stop_requested = False  # To track if stop has been requested.
-
 def load_sounds():
     # Loads sounds from selected playlists.
     global current_sounds
-    current_sounds = []
+    globals.current_sounds = []
     for playlist in playlists:
         if playlist == "all":
             for dirpath, _, filenames in os.walk(config.sounds_folder_path):
-                current_sounds.extend([os.path.join(dirpath, sound) for sound in filenames if sound.endswith(".mp3")])
-        else: current_sounds.extend([os.path.join(playlist, sound) for sound in get_sounds_from_playlist(playlist)])
-    if not current_sounds: return terminal("e", "No sounds found in the selected playlists.", exitScript=True)
-    random.shuffle(current_sounds) # Shuffle sounds for random playback.
+                globals.current_sounds.extend([os.path.join(dirpath, sound) for sound in filenames if sound.endswith(".mp3")])
+        else: globals.current_sounds.extend([os.path.join(playlist, sound) for sound in get_sounds_from_playlist(playlist)])
+    if not globals.current_sounds: return terminal("e", "No sounds found in the selected playlists.", exitScript=True)
+    random.shuffle(globals.current_sounds) # Shuffle sounds for random playback.
 
 def play_sound():
     # Plays the current sound.
-    global is_playing, stop_requested
-    if current_sounds:
+    if globals.current_sounds:
         try:
-            mixer.music.load(current_sounds[current_sound_index])
+            mixer.music.load(globals.current_sounds[current_sound_index])
             mixer.music.set_volume(volume)
             mixer.music.play()
             mixer.music.set_endevent(SOUND_END_EVENT) # Set the end event for sound completion.
-            is_playing = True
-            stop_requested = False
-            sound_name = getSoundName(os.path.basename(current_sounds[current_sound_index]))
+            globals.is_playing = True
+            globals.stop_requested = False
+            sound_name = getSoundName(os.path.basename(globals.current_sounds[current_sound_index]))
             print(f"{cl.BOLD}⏯️ Currently Playing:{cl.ENDC} {sound_name}")
-            update_all_presences(True, sound_name=sound_name, sound_path=current_sounds[current_sound_index])
+            update_all_presences(True, sound_name=sound_name, sound_path=globals.current_sounds[current_sound_index])
         except pygame.error as e: terminal("e", f"Error loading or playing sound: {e}")
         except Exception as e: terminal("e", f"Error playing sound: {e}")
     else: print("No sounds to play.")
 
 def stop_sound():
     # Stops the current sound.
-    global is_playing, stop_requested
-    if is_playing:
+    try:
         mixer.music.stop()
-        is_playing = False
-        stop_requested = True
+        globals.is_playing = False
+        globals.stop_requested = True
         update_all_presences(False)
         print("Sound stopped.")
+    except Exception as e: terminal("e", f"Error stopping")
 
 def restart_sound():
     # Restarts the current sound from the beginning.
@@ -130,14 +128,14 @@ def restart_sound():
 def next_sound():
     # Plays the next sound in the list, or a random one if shuffle is enabled.
     global current_sound_index
-    if is_shuffled: current_sound_index = random.randint(0, len(current_sounds) - 1)
-    else: current_sound_index = (current_sound_index + 1) % len(current_sounds)
+    if is_shuffled: current_sound_index = random.randint(0, len(globals.current_sounds) - 1)
+    else: current_sound_index = (current_sound_index + 1) % len(globals.current_sounds)
     play_sound()
 
 def prev_sound():
     # Plays the previous sound in the list.
     global current_sound_index
-    current_sound_index = (current_sound_index - 1) % len(current_sounds)
+    current_sound_index = (current_sound_index - 1) % len(globals.current_sounds)
     play_sound()
 
 def adjust_volume(amount):
@@ -216,10 +214,10 @@ if __name__ == "__main__":
         load_sounds()
         play_sound()
     running = True
-    stop_requested = False
+    globals.stop_requested = False
     input_thread = threading.Thread(target=user_input_thread)
     input_thread.start()
-    # start_macros()
+    start_macros()
     try:
         while running:
             for event in pygame.event.get():
@@ -227,8 +225,8 @@ if __name__ == "__main__":
                 handle_event(event)
             # Check if the music has stopped playing.
             if not mixer.music.get_busy() and is_playing and not stop_requested: next_sound()
-            clock.tick(30)  # Limit the loop to 30 FPS.
-    except KeyboardInterrupt:
+            clock.tick(30) # Limit the loop to 30 FPS.
+    except (KeyboardInterrupt, EOFError):
         terminal("e", "Interrupted by user.")
         if config.quick_exit: os._exit(0)
         else: update_all_presences(False)

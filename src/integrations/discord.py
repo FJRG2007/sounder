@@ -1,5 +1,5 @@
 import os, time
-from pypresence import Presence, PyPresenceException
+from pypresence import Presence
 from src.utils.basics import terminal, get_sound_data
 from src.cdn_uploader.worker import upload_image_to_cdn
 
@@ -47,7 +47,9 @@ def update_discord_presence(sound_name, sound_path, retries=2):
             )
             break
         except RuntimeError as e:
-            if rpc is False: return
+            try: 
+                if type(rpc) is not Presence or rpc is False: return
+            except Exception as e: pass  
             if "Event loop is closed" in str(e) and rpc:
                 terminal("w", "Event loop is closed. Attempting to reinitialize Discord presence...")
                 init_discord_presence()
@@ -58,7 +60,7 @@ def update_discord_presence(sound_name, sound_path, retries=2):
 
 def clear_discord_presence():
     global rpc
-    if type(rpc) is Presence:
+    if isinstance(rpc, Presence):
         try: 
             rpc.close()
             rpc = False
