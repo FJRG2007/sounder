@@ -9,7 +9,7 @@ last_call_time = 0
 def get_function(function_name="main"):
     global is_playing, last_call_time
     current_time = time.time()
-    if current_time - last_call_time < 0.7: return lambda: None  # Return a lambda that does nothing.
+    if current_time - last_call_time < 0.7: return lambda: None # Return a lambda that does nothing.
     # Update the timestamp of the last function call.
     last_call_time = current_time
     if function_name in {"play_sound", "next_sound"}: globals.is_playing = True
