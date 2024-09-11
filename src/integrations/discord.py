@@ -1,11 +1,11 @@
 import os, time
 from pypresence import Presence
+from src.lib.config import config
 from src.utils.basics import terminal, get_sound_data
 from src.cdn_uploader.worker import upload_image_to_cdn
 
 # Global variable to hold the RPC instance.
 rpc = None
-
 DiscordNotInstalledError = False
 
 def init_discord_presence():
@@ -50,8 +50,8 @@ def update_discord_presence(sound_name, sound_path, retries=2):
             try: 
                 if type(rpc) is not Presence or rpc is False: return
             except Exception as e: pass  
-            if "Event loop is closed" in str(e) and rpc:
-                terminal("w", "Event loop is closed. Attempting to reinitialize Discord presence...")
+            if any(msg in str(e) for msg in ["Event loop is closed", "This event loop is already running"]) and rpc:
+                if config.general.developer_mode: terminal("w", "Event loop is closed. Attempting to reinitialize Discord presence...")
                 init_discord_presence()
                 retries -= 1
                 if retries < 0: terminal("e", "Failed to update Discord presence after retry attempts."); break

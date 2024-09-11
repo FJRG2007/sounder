@@ -118,5 +118,5 @@ def get_sound_data(sound_path):
             response["album_art_path"] = "./defaults/album_art_path.png"
     except Exception as e:
         print(f"Error extracting sound data: {e}")
-        traceback.print_exc()  # Print stack trace for debugging purposes.
+        traceback.print_exc() # Print stack trace for debugging purposes.
     return response

@@ -14,6 +14,7 @@ playlists = []
 SOUND_END_EVENT = pygame.USEREVENT + 1
 # State variables.
 current_sound_index = 0
+paused_position = 0.0
 is_shuffled = False
 volume = 1.0 # Default maximum volume.
 clock = pygame.time.Clock()
@@ -89,13 +90,18 @@ def load_sounds():
     if not globals.current_sounds: return terminal("e", "No sounds found in the selected playlists.", exitScript=True)
     random.shuffle(globals.current_sounds) # Shuffle sounds for random playback.
 
-def play_sound():
+def play_sound(restart=False):
+    global paused_position
     # Plays the current sound.
     if globals.current_sounds:
         try:
             mixer.music.load(globals.current_sounds[current_sound_index])
             mixer.music.set_volume(volume)
-            mixer.music.play()
+            if restart or paused_position == 0.0:
+                mixer.music.load(globals.current_sounds[current_sound_index])
+                mixer.music.play()
+                paused_position = 0.0 # Reset paused position if restarting.
+            else: mixer.music.play(start=paused_position)
             mixer.music.set_endevent(SOUND_END_EVENT) # Set the end event for sound completion.
             globals.is_playing = True
             globals.stop_requested = False
@@ -107,9 +113,11 @@ def play_sound():
     else: terminal("e", "No sounds to play.")
 
 def stop_sound():
+    global paused_position
     # Stops the current sound.
     try:
-        mixer.music.stop()
+        paused_position = mixer.music.get_pos() / 1000.0
+        mixer.music.pause()
         globals.is_playing = False
         globals.stop_requested = True
         update_all_presences(False)
@@ -119,7 +127,7 @@ def stop_sound():
 def restart_sound():
     # Restarts the current sound from the beginning.
     stop_sound()
-    play_sound()
+    play_sound(restart=True)
     print("Sound restarted.")
 
 def next_sound():

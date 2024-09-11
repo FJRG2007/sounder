@@ -22,7 +22,7 @@ $ pip install -r requirements.txt
 ```
 
 > [!NOTE]\
-> Remember to create your playlists as folders and download your sounds in mp3!.
+> Remember to create your playlists as folders and download your sounds in mp3!
 
 ```txt
 📦sounds
