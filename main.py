@@ -14,6 +14,7 @@ playlists = []
 SOUND_END_EVENT = pygame.USEREVENT + 1
 # State variables.
 current_sound_index = 0
+previous_sound_index = 0
 paused_position = 0.0
 is_shuffled = False
 volume = 1.0 # Default maximum volume.
