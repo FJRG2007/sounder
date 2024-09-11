@@ -113,10 +113,10 @@ def get_sound_data(sound_path):
                     response["album_art_path"] = image_filename
         except Exception as e:
             if config.general.developer_mode:
-                print(f"Error extracting album art: {e}")
+                terminal("e", f"Error extracting album art: {e}")
                 traceback.print_exc()
             response["album_art_path"] = "./defaults/album_art_path.png"
     except Exception as e:
-        print(f"Error extracting sound data: {e}")
-        traceback.print_exc() # Print stack trace for debugging purposes.
+        terminal("e", f"Error extracting sound data: {e}")
+        if config.general.developer_mode: traceback.print_exc() # Print stack trace for debugging purposes.
     return response

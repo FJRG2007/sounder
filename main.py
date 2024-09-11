@@ -91,13 +91,13 @@ def load_sounds():
     random.shuffle(globals.current_sounds) # Shuffle sounds for random playback.
 
 def play_sound(restart=False):
-    global paused_position
+    global paused_position, previous_sound_index
     # Plays the current sound.
     if globals.current_sounds:
         try:
             mixer.music.load(globals.current_sounds[current_sound_index])
             mixer.music.set_volume(volume)
-            if restart or paused_position == 0.0:
+            if restart or paused_position == 0.0 or previous_sound_index != current_sound_index:
                 mixer.music.load(globals.current_sounds[current_sound_index])
                 mixer.music.play()
                 paused_position = 0.0 # Reset paused position if restarting.
