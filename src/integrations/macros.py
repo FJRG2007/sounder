@@ -62,9 +62,11 @@ def start_macros():
             if macros_device_path: threading.Thread(target=macros_button_listener_linux, args=(macros_device_path,)).start()
         elif os_name in ["Darwin", "Windows"]:
             try:
-                with keyboard.Listener(on_press=on_press) as listener:
-                    listener.join()
+                listener = keyboard.Listener(on_press=on_press)
+                listener.start()
+                listener.join()
             except Exception as e: terminal("e", f"Error in keyboard listener: {e}")
-            finally: listener.stop()
+            finally:
+                if listener and listener.running: listener.stop()
     # Run the above logic in a separate thread.
     threading.Thread(target=run_macros).start()
