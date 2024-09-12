@@ -50,7 +50,7 @@ def update_discord_presence(sound_name, sound_path, retries=2):
             try: 
                 if type(rpc) is not Presence or rpc is False: return
             except Exception as e: pass
-            if any(msg in str(e).lower() for msg in ["event loop is closed", "this event loop is already running", "runtimewarning", "baseclient.read_output", "unknown error"]) and rpc:
+            if any(msg in str(e).lower() for msg in ["event loop is closed", "the pipe was closed", "this event loop is already running", "runtimewarning", "baseclient.read_output", "unknown error"]) and rpc:
                 if config.general.developer_mode: terminal("w", "Event loop is closed. Attempting to reinitialize Discord presence...")
                 init_discord_presence()
                 retries -= 1
