@@ -21,6 +21,8 @@ Now install the requirements:
 $ pip install -r requirements.txt
 ```
 
+Then, replace the `.env.example` file to `.env` and fill in the tokens you need.
+
 > [!NOTE]\
 > Remember to create your playlists as folders and download your sounds in mp3!
 
