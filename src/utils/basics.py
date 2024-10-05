@@ -1,11 +1,11 @@
 import src.lib.colors as cl
 from mutagen.mp3 import MP3
 from rich.panel import Panel
-import os, sys, time, traceback
 from rich.console import Console
 from rich import print as rprint
 from src.lib.config import config
 from rich.markdown import Markdown
+import os, sys, time, asyncio, traceback
 from mutagen.id3 import ID3, APIC, TIT2, TPE1
 
 console = Console()
@@ -71,6 +71,9 @@ def terminal(typeMessage, string="", exitScript=False, clear="n", newline=True, 
     if exitScript: sys.exit(1 if typeMessage == "e" else 0)
     if clear == "a" or typeMessage == "iom": cls()
     if timer: time.sleep(2)
+
+def run_async(coroutine):
+    return asyncio.get_event_loop().run_until_complete(coroutine)
 
 def getSoundName(name) -> str:
     return name.replace("\\", "/").rsplit("/", 1)[-1].rsplit(".", 1)[0]

@@ -1,4 +1,5 @@
 from pygame import mixer
+from mutagen.mp3 import MP3
 import src.lib.colors as cl
 import src.lib.data as data
 from dotenv import load_dotenv
@@ -96,18 +97,24 @@ def play_sound(restart=False):
     # Plays the current sound.
     if globals.current_sounds:
         try:
-            mixer.music.load(globals.current_sounds[current_sound_index])
+            sound_path = globals.current_sounds[current_sound_index]
+            mixer.music.load(sound_path)
             mixer.music.set_volume(volume)
             if restart or paused_position == 0.0 or previous_sound_index != current_sound_index:
-                mixer.music.load(globals.current_sounds[current_sound_index])
                 mixer.music.play()
-                paused_position = 0.0 # Reset paused position if restarting.
+                paused_position = 0.0  # Reset paused position if restarting.
             else: mixer.music.play(start=paused_position)
-            mixer.music.set_endevent(SOUND_END_EVENT) # Set the end event for sound completion.
+            mixer.music.set_endevent(SOUND_END_EVENT)  # Set the end event for sound completion.
             globals.is_playing = True
             globals.stop_requested = False
-            sound_name = getSoundName(os.path.basename(globals.current_sounds[current_sound_index]))
-            print(f"{cl.BOLD}⏯️ Currently Playing:{cl.ENDC} {sound_name}")
+            # Get sound duration in minutes and seconds.
+            audio = MP3(sound_path)
+            duration_minutes = int(audio.info.length // 60)
+            duration_seconds = int(audio.info.length % 60)
+            sound_name = getSoundName(os.path.basename(sound_path))
+
+            # Imprimir el nombre del sonido y la duración
+            print(f"{cl.BOLD}⏯️ Currently Playing:{cl.ENDC} {sound_name} {cl.g}[{duration_minutes}:{duration_seconds:02d} min]{cl.ENDC}")
             update_all_presences(True, sound_name=sound_name, sound_path=globals.current_sounds[current_sound_index])
         except pygame.error as e: terminal("e", f"Error loading or playing sound: {e}")
         except Exception as e: terminal("e", f"Error playing sound: {e}")
