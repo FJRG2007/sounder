@@ -99,7 +99,7 @@ def play_sound(restart=False, on_error_list=False):
             mixer.music.set_volume(volume)
             if restart or paused_position == 0.0 or previous_sound_index != current_sound_index:
                 mixer.music.play()
-                paused_position = 0.0  # Reset paused position if restarting.
+                paused_position = 0.0 # Reset paused position if restarting.
             else: mixer.music.play(start=paused_position)
             mixer.music.set_endevent(SOUND_END_EVENT) # Set the end event for sound completion.
             globals.is_playing = True
@@ -189,9 +189,9 @@ def user_input_thread():
             else: stop_sound()
             running = False
             break
-        elif command.isdigit() and getPositive(quest(f"That's not a valid command, maybe you want to choose a sound from the current playlist? {cl.g}[y]{cl.ENDC}/n")):
-            command = int(command) 
-            play_selected_sound(command, on_error_list=True) if (command > 1 and command < len(playlists[0][1])) is not None else None
+        # elif command.isdigit() and getPositive(quest(f"That's not a valid command, maybe you want to choose a sound from the current playlist? {cl.g}[y]{cl.ENDC}/n")):
+        #     command = int(command) 
+        #     play_selected_sound(command - 1, on_error_list=True) if (command > 1 and command < len(playlists[0][1])) is not None else None
         else: terminal("e", "Enter valid command.")
         time.sleep(0.1) # Small delay to prevent high CPU usage.
 
