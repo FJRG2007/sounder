@@ -36,7 +36,7 @@ def get_sounds_from_playlist(playlist):
 def list_playlists():
     # Lists available playlists and allows the user to select one.
     global playlists
-    playlists = get_playlists_or_sounds()  # Populate the playlists list.
+    playlists = get_playlists_or_sounds() # Populate the playlists list.
     print("Available Playlists:")
     for i, playlist in enumerate(playlists):
         print(f"{cl.b}[{cl.w}{i+1}{cl.b}]{cl.w} {playlist}")
