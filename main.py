@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from src.lib.config import config
 from src.integrations.macros import start_macros
 from src.integrations.worker import update_all_presences
-from src.utils.basics import cls, quest, terminal, getSoundName
+from src.utils.basics import cls, quest, terminal, getPositive, getSoundName
 import os, sys, time, random, signal, src.lib.globals as globals, pygame, pyfiglet, warnings, platform, threading
 
 # Initialize playlists list.
@@ -45,31 +45,28 @@ def list_playlists():
     print(f" {cl.w}|")
 
 # Function to list sounds in a playlist and select one.
-def list_sounds(playlist):
-    # Lists all sounds in the given playlist and allows the user to select one.
-    current_sound_index
+def list_sounds(playlist, sound_choice=None):
+    global current_sound_index
     globals.current_sounds = [os.path.join(playlist, sound) for sound in get_sounds_from_playlist(playlist)]
-    print(f"\nSounds in {playlist.replace("\\", "/").rsplit("/", 1)[-1]}:")
+    print(f"\nSounds in {playlist.replace('\\', '/').rsplit('/', 1)[-1]}:")
     for i, sound in enumerate(globals.current_sounds):
         print(f"{cl.b}[{cl.w}{i+1}{cl.b}]{cl.w} {getSoundName(sound)}")
         # Add separator for visual clarity every 3 items.
         if (i + 1) % 3 == 0 and i != len(globals.current_sounds) - 1: print(f" {cl.w}|")
-    # Prompt user to select a sound.
-    sound_choice = quest("Enter the number of the sound to play, or press Enter to skip selection", lowercase=True)
-    
-    # Check if a sound number was chosen.
-    if sound_choice.isdigit():
-        sound_index = int(sound_choice) - 1
-        if 0 <= sound_index < len(globals.current_sounds): return globals.current_sounds, sound_index # Return the list of sounds and the chosen index.
-        else:
-            terminal("e", "Invalid sound selection. Playing the first sound.")
-            return globals.current_sounds, 0
-    else: return globals.current_sounds, 0 # Default to the first sound if no selection is made.
+    print(f" {cl.w}|")
+    while True:
+        if not sound_choice: sound_choice = quest("Enter the number of the sound to play, or press Enter to skip selection", lowercase=True)
+        if sound_choice.isdigit():
+            sound_index = int(sound_choice) - 1
+            if 0 <= sound_index < len(globals.current_sounds): return globals.current_sounds, sound_index
+            else: terminal("e", "Invalid sound selection. Please choose a number within the range.")
+        elif sound_choice == "": return globals.current_sounds, 0
+        else: terminal("e", "Invalid input. Please enter a number or press Enter to skip.")
 
-def play_selected_sound(sound_index):
+def play_selected_sound(sound_index, on_error_list=False):
     global current_sound_index
     if sound_index is not None: current_sound_index = sound_index
-    play_sound()
+    play_sound(on_error_list=on_error_list)
 
 def select_playlist():
     global playlists
@@ -92,7 +89,7 @@ def load_sounds():
     if not globals.current_sounds: return terminal("e", "No sounds found in the selected playlists.", exitScript=True)
     random.shuffle(globals.current_sounds) # Shuffle sounds for random playback.
 
-def play_sound(restart=False):
+def play_sound(restart=False, on_error_list=False):
     global paused_position, previous_sound_index
     # Plays the current sound.
     if globals.current_sounds:
@@ -115,7 +112,9 @@ def play_sound(restart=False):
             print(f"{cl.BOLD}⏯️ Currently Playing:{cl.ENDC} {sound_name} {cl.g}[{duration_minutes}:{duration_seconds:02d} min]{cl.ENDC}")
             update_all_presences(True, sound_name=sound_name, sound_path=globals.current_sounds[current_sound_index])
         except pygame.error as e: terminal("e", f"Error loading or playing sound: {e}")
-        except Exception as e: terminal("e", f"Error playing sound: {e}")
+        except Exception as e: 
+            terminal("e", f"Error playing sound: {e}")
+            if on_error_list: play_selected_sound(sound_index) if (sound_index := list_sounds(playlists[0])[1]) is not None else None
     else: terminal("e", "No sounds to play.")
 
 def stop_sound():
@@ -127,14 +126,14 @@ def stop_sound():
         globals.is_playing = False
         globals.stop_requested = True
         update_all_presences(False)
-        print("Sound stopped.")
+        print(f"{cl.BOLD}⏸️ Sound stopped.{cl.ENDC}")
     except Exception as e: terminal("e", f"Error stopping.")
 
 def restart_sound():
     # Restarts the current sound from the beginning.
     stop_sound()
     play_sound(restart=True)
-    print("Sound restarted.")
+    print(f"{cl.BOLD}🔄 Sound restarted.{cl.ENDC}")
 
 def next_sound():
     # Plays the next sound in the list, or a random one if shuffle is enabled.
@@ -190,6 +189,10 @@ def user_input_thread():
             else: stop_sound()
             running = False
             break
+        elif command.isdigit() and getPositive(quest(f"That's not a valid command, maybe you want to choose a song from the current playlist? {cl.g}[y]{cl.ENDC}/n")):
+            command = int(command) 
+            play_selected_sound(command, on_error_list=True) if (command > 1 and command < len(playlists[0][1])) is not None else None
+        else: terminal("e", "Enter valid command.")
         time.sleep(0.1) # Small delay to prevent high CPU usage.
 
 def signal_handler(sig, frame):
@@ -209,13 +212,9 @@ if __name__ == "__main__":
     cls()
     print(pyfiglet.figlet_format("SOUNDER"))
     print(f'\n{cl.des_space}{cl.b}>> {cl.w}Welcome to Sounder, remember to use it responsibly. \n{cl.des_space}{cl.b}>> {cl.w}Join to our Discord server on tpe.li/dsc\n{cl.des_space}{cl.b}>> {cl.w}Version: {data.version}\n')
-    if not sys.version[0] in "3":
-        terminal("e", "Sounder only works properly with Pytnon 3. Please upgrade/use Python 3.", exitScript=True)
-        exit(1)
+    if not sys.version[0] in "3": terminal("e", "Sounder only works properly with Pytnon 3. Please upgrade/use Python 3.", exitScript=True)
     current_os = platform.system()
-    if current_os not in ["Linux", "Darwin", "Windows"]:
-        terminal("e", f"Sounder macros only support Linux, macOS, and Windows. Your OS ({current_os}) is not supported.", exitScript=True)
-        exit(1)
+    if current_os not in ["Linux", "Darwin", "Windows"]: terminal("e", f"Sounder macros only support Linux, macOS, and Windows. Your OS ({current_os}) is not supported.", exitScript=True)
     load_dotenv(override=True)
 
     # Handle Ctrl+C to exit quickly and cleanly.
