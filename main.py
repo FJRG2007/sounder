@@ -189,7 +189,7 @@ def user_input_thread():
             else: stop_sound()
             running = False
             break
-        elif command.isdigit() and getPositive(quest(f"That's not a valid command, maybe you want to choose a song from the current playlist? {cl.g}[y]{cl.ENDC}/n")):
+        elif command.isdigit() and getPositive(quest(f"That's not a valid command, maybe you want to choose a sound from the current playlist? {cl.g}[y]{cl.ENDC}/n")):
             command = int(command) 
             play_selected_sound(command, on_error_list=True) if (command > 1 and command < len(playlists[0][1])) is not None else None
         else: terminal("e", "Enter valid command.")
