@@ -32,7 +32,6 @@ Then, replace the `.env.example` file to `.env` and fill in the tokens you need.
  ┃ ┗ 📜Sound Name.mp3
 ```
 
-Then, replace the `.env.example` file to `.env` and fill in the tokens you need.
 ```bash
 $ python main.py
 ```
