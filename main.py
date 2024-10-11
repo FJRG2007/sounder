@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from src.lib.config import config
 from src.integrations.macros import start_macros
 from src.integrations.worker import update_all_presences
-from src.utils.basics import cls, quest, terminal, getPositive, getSoundName
+from src.utils.basics import cls, quest, terminal, getSoundName
 import os, sys, time, random, signal, src.lib.globals as globals, pygame, pyfiglet, warnings, platform, threading
 
 # Initialize playlists list.
@@ -48,7 +48,7 @@ def list_playlists():
 def list_sounds(playlist, sound_choice=None):
     global current_sound_index
     globals.current_sounds = [os.path.join(playlist, sound) for sound in get_sounds_from_playlist(playlist)]
-    print(f"\nSounds in {playlist.replace('\\', '/').rsplit('/', 1)[-1]}:")
+    print(f"\nSounds in {playlist.replace("\\", "/").rsplit("/", 1)[-1]}:")
     for i, sound in enumerate(globals.current_sounds):
         print(f"{cl.b}[{cl.w}{i+1}{cl.b}]{cl.w} {getSoundName(sound)}")
         # Add separator for visual clarity every 3 items.

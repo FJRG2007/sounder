@@ -27,7 +27,7 @@ def quest(prompt, newline=False, lowercase=False, tab=False, format_type=str):
     prefix += f"\t" if tab else ''
     while True:
         try:
-            response = input(f"{prefix}{cl.b}[{cl.w}?{cl.b}]{cl.w} {prompt}: ")
+            response = input(f"{prefix}{cl.b}[{cl.w}?{cl.b}]{cl.w} {prompt}: ").strip()
             if format_type == int: value = int(response)
             elif format_type == str and lowercase: value = response.lower()
             else: value = response
