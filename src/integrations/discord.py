@@ -56,7 +56,9 @@ def update_discord_presence(sound_name, sound_path, retries=2):
                 retries -= 1
                 if retries < 0: terminal("e", "Failed to update Discord presence after retry attempts."); break
             else: terminal("e", f"Error updating Discord presence: {e}"); break
-        except Exception as e: terminal("e", f"Error updating Discord presence: {e}"); break
+        except Exception as e:
+            if "I/O operation on closed pipe" not in str(e): terminal("e", f"Error updating Discord presence: {e}")
+            break
 
 def clear_discord_presence():
     global rpc
