@@ -153,13 +153,14 @@ def adjust_volume(amount):
     global volume
     volume = max(0.0, min(1.0, volume + amount)) # Ensure volume stays between 0.0 and 1.0.
     mixer.music.set_volume(volume)
-    print(f"{cl.BOLD}Volume:{cl.ENDC} {int(volume * 100)}%")
+    volume_percentage = int(volume * 100)
+    print(f"{cl.BOLD}{'🔇' if volume_percentage == 0 else '🔊'} Volume:{cl.ENDC} {volume_percentage}%")
 
 def toggle_shuffle():
     # Toggles between shuffle mode and sequential mode.
     global is_shuffled
     is_shuffled = not is_shuffled
-    print(f"{cl.BOLD}Playback mode:{cl.ENDC} {'Shuffle' if is_shuffled else 'Sequential'}")
+    print(f"{cl.BOLD}🔀 Playback mode:{cl.ENDC} {'Shuffle' if is_shuffled else 'Sequential'}")
 
 def handle_event(event):
     # Handles pygame events.
