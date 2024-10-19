@@ -137,8 +137,11 @@ def restart_sound():
 
 def next_sound():
     # Plays the next sound in the list, or a random one if shuffle is enabled.
-    global current_sound_index
-    if is_shuffled: current_sound_index = random.randint(0, len(globals.current_sounds) - 1)
+    global current_sound_index, previous_sound_index
+    if is_shuffled:
+        while True:
+            current_sound_index = random.randint(0, len(globals.current_sounds) - 1)
+            if current_sound_index != previous_sound_index: break
     else: current_sound_index = (current_sound_index + 1) % len(globals.current_sounds)
     play_sound()
 
