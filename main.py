@@ -62,6 +62,7 @@ def list_sounds(playlist, sound_choice=None):
             else: terminal("e", "Invalid sound selection. Please choose a number within the range.")
         elif sound_choice == "": return globals.current_sounds, 0
         else: terminal("e", "Invalid input. Please enter a number or press Enter to skip.")
+        sound_choice = None
 
 def play_selected_sound(sound_index, on_error_list=False):
     global current_sound_index
