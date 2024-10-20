@@ -210,7 +210,7 @@ def signal_handler(sig, frame):
 
 if __name__ == "__main__":
     # Production only.
-    if not config.general.developer_mode: warnings.filterwarnings("ignore", category=ResourceWarning, module="asyncio")
+    if not config.general.developer_mode: warnings.filterwarnings("ignore", category=RuntimeWarning)
     # Banner
     cls()
     print(pyfiglet.figlet_format("SOUNDER"))
