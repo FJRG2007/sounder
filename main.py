@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from src.lib.config import config
 from src.integrations.macros import start_macros
 from src.integrations.worker import update_all_presences
-from src.utils.basics import cls, quest, terminal, getSoundName
+from src.utils.basics import cls, quest, terminal, getSoundName, set_terminal_title
 import os, sys, time, random, signal, src.lib.globals as globals, pygame, pyfiglet, warnings, platform, threading
 
 # Initialize playlists list.
@@ -111,6 +111,7 @@ def play_sound(restart=False, on_error_list=False):
             duration_seconds = int(audio.info.length % 60)
             sound_name = getSoundName(os.path.basename(sound_path))
             print(f"{cl.BOLD}⏯️ Currently Playing:{cl.ENDC} {sound_name} {cl.g}[{duration_minutes}:{duration_seconds:02d} min]{cl.ENDC}")
+            set_terminal_title(f"{sound_name} | Sounder")
             update_all_presences(True, sound_name=sound_name, sound_path=globals.current_sounds[current_sound_index])
         except pygame.error as e: terminal("e", f"Error loading or playing sound: {e}")
         except Exception as e: 

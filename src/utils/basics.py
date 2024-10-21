@@ -5,8 +5,8 @@ from rich.console import Console
 from rich import print as rprint
 from src.lib.config import config
 from rich.markdown import Markdown
-import os, sys, time, asyncio, traceback
 from mutagen.id3 import ID3, APIC, TIT2, TPE1
+import os, sys, time, asyncio, traceback, platform
 
 console = Console()
 
@@ -123,3 +123,9 @@ def get_sound_data(sound_path):
         terminal("e", f"Error extracting sound data: {e}")
         if config.general.developer_mode: traceback.print_exc() # Print stack trace for debugging purposes.
     return response
+
+def set_terminal_title(title: str):
+    system = platform.system()
+    if system == "Windows": os.system(f"title {title}")
+    elif system in ["Linux", "Darwin"]: print(f"\033]0;{title}\007", end="", flush=True)
+    else: raise OSError(f"Unsupported OS: {system}")
