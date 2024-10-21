@@ -56,7 +56,7 @@ def update_discord_presence(sound_name, sound_path, retries=2):
                 retries -= 1
                 if retries < 0: terminal("e", "Failed to update Discord presence after retry attempts."); break
             else:
-                if any(msg in str(e).lower() for msg in ["unknown error", "'bool' object has no attribute 'update'", "baseclient.read_output"]) and config.general.developer_mode: terminal("i", f"Ignoring known Discord presence update error: {e}")
+                if any(msg in str(e).lower() for msg in ["unknown error", "'bool' object has no attribute 'update'", "baseclient.read_output" , "the pipe was closed. catch this exception and re-connect your instance."]) and config.general.developer_mode: terminal("i", f"Ignoring known Discord presence update error: {e}")
                 else: terminal("e", f"Error updating Discord presence: {e}")
                 break
         except Exception as e:
