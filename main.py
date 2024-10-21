@@ -221,7 +221,8 @@ if __name__ == "__main__":
     current_os = platform.system()
     if current_os not in ["Linux", "Darwin", "Windows"]: terminal("e", f"Sounder macros only support Linux, macOS, and Windows. Your OS ({current_os}) is not supported.", exitScript=True)
     load_dotenv(override=True)
-
+    set_terminal_title("Sounder")
+    
     # Handle Ctrl+C to exit quickly and cleanly.
     signal.signal(signal.SIGINT, signal_handler)
 
@@ -237,7 +238,6 @@ if __name__ == "__main__":
     input_thread = threading.Thread(target=user_input_thread)
     input_thread.start()
     start_macros()
-    set_terminal_title("Sounder")
     try:
         while running:
             for event in pygame.event.get():
