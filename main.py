@@ -129,6 +129,7 @@ def stop_sound():
         globals.stop_requested = True
         update_all_presences(False)
         print(f"{cl.BOLD}⏸️ Sound stopped.{cl.ENDC}")
+        set_terminal_title("Sounder")
     except Exception as e: terminal("e", f"Error stopping.")
 
 def restart_sound():
@@ -236,6 +237,7 @@ if __name__ == "__main__":
     input_thread = threading.Thread(target=user_input_thread)
     input_thread.start()
     start_macros()
+    set_terminal_title("Sounder")
     try:
         while running:
             for event in pygame.event.get():
