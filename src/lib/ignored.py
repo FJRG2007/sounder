@@ -1,0 +1,1 @@
+ignored_errors = ["event loop is closed", "the pipe was closed", "this event loop is already running", "runtimewarning", "baseclient.read_output", "unknown error", "'bool' object has no attribute 'update'", "the pipe was closed. catch this exception and re-connect your instance.", "i/o operation on closed pipe"]

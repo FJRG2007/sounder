@@ -1,6 +1,7 @@
 import os, time
 from pypresence import Presence
 from src.lib.config import config
+from src.lib.ignored import ignored_errors
 from src.utils.basics import terminal, get_sound_data
 from src.cdn_uploader.worker import upload_image_to_cdn
 
@@ -50,17 +51,17 @@ def update_discord_presence(sound_name, sound_path, retries=2):
             try: 
                 if type(rpc) is not Presence or rpc is False: break
             except Exception as e: pass
-            if any(msg in str(e).lower() for msg in ["event loop is closed", "the pipe was closed", "this event loop is already running", "runtimewarning", "baseclient.read_output", "unknown error"]) and rpc:
+            if any(msg in str(e).lower() for msg in ignored_errors) and rpc:
                 if config.general.developer_mode: terminal("w", "Event loop is closed. Attempting to reinitialize Discord presence...")
                 init_discord_presence()
                 retries -= 1
                 if retries < 0: terminal("e", "Failed to update Discord presence after retry attempts."); break
             else:
-                if any(msg in str(e).lower() for msg in ["unknown error", "'bool' object has no attribute 'update'", "baseclient.read_output" , "the pipe was closed. catch this exception and re-connect your instance."]) and config.general.developer_mode: terminal("i", f"Ignoring known Discord presence update error: {e}")
+                if any(msg in str(e).lower() for msg in ignored_errors) and config.general.developer_mode: terminal("i", f"Ignoring known Discord presence update error: {e}")
                 else: terminal("e", f"Error updating Discord presence: {e}")
                 break
         except Exception as e:
-            if "I/O operation on closed pipe" not in str(e): terminal("e", f"Error updating Discord presence: {e}")
+            if not any(msg in str(e).lower() for msg in ignored_errors): terminal("e", f"Error updating Discord presence: {e}")
             break
 
 def clear_discord_presence():
