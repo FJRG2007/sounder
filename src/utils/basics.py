@@ -6,7 +6,7 @@ from rich import print as rprint
 from src.lib.config import config
 from rich.markdown import Markdown
 from mutagen.id3 import ID3, APIC, TIT2, TPE1
-import os, sys, time, asyncio, traceback, platform
+import os, sys, time, ctypes, asyncio, traceback, platform
 
 console = Console()
 
@@ -126,6 +126,6 @@ def get_sound_data(sound_path):
 
 def set_terminal_title(title: str):
     system = platform.system()
-    if system == "Windows": os.system(f"title {title}")
+    if system == "Windows": ctypes.windll.kernel32.SetConsoleTitleW(title)
     elif system in ["Linux", "Darwin"]: print(f"\033]0;{title}\007", end="", flush=True)
     else: raise OSError(f"Unsupported OS: {system}")

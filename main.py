@@ -212,15 +212,21 @@ def signal_handler(sig, frame):
 
 if __name__ == "__main__":
     # Production only.
+
+    # Mute errors of integrations by shutdown or upgrade.
     if not config.general.developer_mode: warnings.filterwarnings("ignore", category=RuntimeWarning)
-    # Banner
+    sys.stderr = open(os.devnull, "w")
+    os.environ["ERRORLEVEL"] = "0"
+    
+    # Banner.
     cls()
     print(pyfiglet.figlet_format("SOUNDER"))
-    print(f'\n{cl.des_space}{cl.b}>> {cl.w}Welcome to Sounder, remember to use it responsibly. \n{cl.des_space}{cl.b}>> {cl.w}Join to our Discord server on tpe.li/dsc\n{cl.des_space}{cl.b}>> {cl.w}Version: {data.version}\n')
+    print(f'\n{cl.des_space}{cl.b}>> {cl.w}Welcome to Sounder, remember to use it responsibly. \n{cl.des_space}{cl.b}>> {cl.w}Join to our Discord server on tpe.li/dsc\n{cl.des_space}{cl.b}>> {cl.w}Version: {data.version}\n{cl.des_space}{cl.b}>> {cl.w}A project by FJRG2007\n')
     if not sys.version[0] in "3": terminal("e", "Sounder only works properly with Pytnon 3. Please upgrade/use Python 3.", exitScript=True)
     current_os = platform.system()
     if current_os not in ["Linux", "Darwin", "Windows"]: terminal("e", f"Sounder macros only support Linux, macOS, and Windows. Your OS ({current_os}) is not supported.", exitScript=True)
     load_dotenv(override=True)
+
     set_terminal_title("Sounder")
     
     # Handle Ctrl+C to exit quickly and cleanly.
@@ -239,6 +245,7 @@ if __name__ == "__main__":
     input_thread.start()
     start_macros()
     try:
+        os.system("Sounder")
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: running = False
@@ -257,3 +264,4 @@ if __name__ == "__main__":
             update_all_presences(False)
             input_thread.join()
             pygame.quit()
+            sys.stderr = sys.__stderr__
