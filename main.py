@@ -17,7 +17,6 @@ SOUND_END_EVENT = pygame.USEREVENT + 1
 current_sound_index = 0
 previous_sound_index = 0
 paused_position = 0.0
-is_shuffled = False
 volume = 1.0 # Default maximum volume.
 clock = pygame.time.Clock()
 
@@ -142,7 +141,7 @@ def next_sound():
     # Plays the next sound in the list, or a random one if shuffle is enabled.
     global current_sound_index, previous_sound_index
     previous_sound_index = current_sound_index
-    if is_shuffled: current_sound_index = random.choice([i for i in range(len(globals.current_sounds)) if i != previous_sound_index])
+    if config.player.reproduction_order == "shuffled": current_sound_index = random.choice([i for i in range(len(globals.current_sounds)) if i != previous_sound_index])
     else: current_sound_index = (current_sound_index + 1) % len(globals.current_sounds)
     play_sound()
 
@@ -162,9 +161,9 @@ def adjust_volume(amount):
 
 def toggle_shuffle():
     # Toggles between shuffle mode and sequential mode.
-    global is_shuffled
-    is_shuffled = not is_shuffled
-    print(f"{cl.BOLD}🔀 Playback mode:{cl.ENDC} {'Shuffle' if is_shuffled else 'Sequential'}")
+    config.player.reproduction_order =  "sequential" if config.player.reproduction_order == "shuffled" else "shuffled"
+    config.save_config()
+    print(f"{cl.BOLD}🔀 Playback mode:{cl.ENDC} {'Shuffle' if config.player.reproduction_order == "shuffled" else 'Sequential'}")
 
 def handle_event(event):
     # Handles pygame events.
@@ -265,3 +264,4 @@ if __name__ == "__main__":
             input_thread.join()
             pygame.quit()
             sys.stderr = sys.__stderr__
+            config.save_config()

@@ -13,6 +13,10 @@
         // In case you want to see more error logs.
         "developer_mode": false
     },
+    "player": {
+        // Modalities of reproduction order (sequential, shuffled).
+        "reproduction_order": "sequential"
+    },
     // Control Sounder from your headphones or other devices.
     "macros": {
         // Status of Sounder macros.
