@@ -1,9 +1,7 @@
-import os, re
-import src.lib.colors as cl
+import os, re, src.lib.colors as cl
 from src.utils.basics import normalize_text, getSoundName, get_sounds_from_playlist
 
 def search_in_playlist(playlist, search_term):
-    print(playlist)
     normalized_search = normalize_text(search_term)
     matching_sounds = []
     playlist_sounds = [os.path.join(playlist, sound) for sound in get_sounds_from_playlist(playlist)]
