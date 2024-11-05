@@ -193,21 +193,22 @@ def user_input_thread():
     while running:
         print("\nCommands: [p] Play Sound, [n] Next Sound, [v] Previous Sound, [v+] Increase Volume, [v-] Decrease Volume, [s] Toggle Shuffle, [l] List Sounds, [b] Back to Playlist Selection, [r] Restart Sound, [x] Stop Sound, [q] Quit")
         command = quest("Enter command", lowercase=True)
-        if command == "p": play_sound()
-        elif command == "n": next_sound()
+        if command.startswith("/"): command = command.replace("/", "")
+        if command in ["p", "play"]: play_sound()
+        elif command in ["n", "next"]: next_sound()
         elif command == "v": prev_sound()
         elif command == "v+": adjust_volume(0.1)
         elif command == "v-": adjust_volume(-0.1)
         elif command == "s": toggle_shuffle()
-        elif command == "l": play_selected_sound(sound_index) if (sound_index := list_sounds(playlists[0])[1]) is not None else None
+        elif command in ["l", "list"]: play_selected_sound(sound_index) if (sound_index := list_sounds(playlists[0])[1]) is not None else None
         elif command == "b":
             select_playlist()
             if "all" not in playlists:
                 load_sounds()
                 play_sound()
-        elif command == "x": stop_sound()
-        elif command == "r": restart_sound()
-        elif command == "q":
+        elif command in ["x", "stop"]: stop_sound()
+        elif command in ["r", "restart"]: restart_sound()
+        elif command in ["q", "exit", "quit"]:
             if config.general.quick_exit: os._exit(0)
             else: stop_sound()
             running = False
