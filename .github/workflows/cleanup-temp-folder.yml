@@ -1,0 +1,26 @@
+name: Cleanup Temp Folder
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+
+jobs:
+  delete_temp_folder:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Delete temp folder if exists
+        run: |
+          if [ -d "./temp" ]; then
+            echo "Temp folder found. Deleting..."
+            rm -rf ./temp
+          else
+            echo "Temp folder not found. Skipping..."
+          fi
