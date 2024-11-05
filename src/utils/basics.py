@@ -6,7 +6,7 @@ from rich import print as rprint
 from src.lib.config import config
 from rich.markdown import Markdown
 from mutagen.id3 import ID3, APIC, TIT2, TPE1
-import os, sys, time, ctypes, asyncio, traceback, platform
+import os, re, sys, time, ctypes, asyncio, traceback, platform, unicodedata
 
 console = Console()
 
@@ -129,3 +129,15 @@ def set_terminal_title(title: str):
     if system == "Windows": ctypes.windll.kernel32.SetConsoleTitleW(title)
     elif system in ["Linux", "Darwin"]: print(f"\033]0;{title}\007", end="", flush=True)
     else: raise OSError(f"Unsupported OS: {system}")
+
+def normalize_text(text):
+    normalized = unicodedata.normalize("NFD", text)
+    normalized = normalized.encode("ascii", "ignore").decode("utf-8").lower()
+    return re.sub(r'[^a-z0-9\s]', "", normalized)
+
+# Function to get list of sounds from a playlist (directory).
+def get_sounds_from_playlist(playlist):
+    try: return [sound for sound in os.listdir(playlist) if sound.endswith(".mp3")]
+    except FileNotFoundError:
+        print(f"Error: The path '{playlist}' was not found.")
+        return []

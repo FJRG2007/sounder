@@ -35,3 +35,10 @@ Then, replace the `.env.example` file to `.env` and fill in the tokens you need.
 ```bash
 $ python main.py
 ```
+
+### Features
+
+- Algorithm for sound recommendation and sound selection.
+- Sound search system in the current playlist.
+- Direct integration with Discord and Macros for device control.
+- Customized playback order for the user.

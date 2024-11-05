@@ -7,7 +7,8 @@ from src.lib.config import config
 from collections import defaultdict
 from src.integrations.macros import start_macros
 from src.integrations.worker import update_all_presences
-from src.utils.basics import cls, quest, terminal, getSoundName, set_terminal_title
+from src.utils.player.playlists import search_in_playlist
+from src.utils.basics import cls, quest, terminal, getSoundName, set_terminal_title, get_sounds_from_playlist
 import os, sys, time, random, signal, src.lib.globals as globals, pygame, pyfiglet, warnings, platform, threading
 
 # Initialize playlists list.
@@ -25,13 +26,6 @@ reproduction_counts = defaultdict(int)
 # Function to get list of playlists (directories) or sounds (files).
 def get_playlists_or_sounds():
     return [name for name in os.listdir(config.general.sounds_folder_path) if os.path.isdir(os.path.join(config.general.sounds_folder_path, name)) and name != "Playlist Name"]
-
-# Function to get list of sounds from a playlist (directory).
-def get_sounds_from_playlist(playlist):
-    try: return [sound for sound in os.listdir(playlist) if sound.endswith(".mp3")]
-    except FileNotFoundError:
-        print(f"Error: The path '{playlist}' was not found.")
-        return []
 
 # Function to list playlists and choose one.
 def list_playlists():
@@ -213,6 +207,7 @@ def user_input_thread():
             else: stop_sound()
             running = False
             break
+        elif command in ["search", "query"]: search_in_playlist(playlists[0], quest("Enter search term"))
         # elif command.isdigit() and getPositive(quest(f"That's not a valid command, maybe you want to choose a sound from the current playlist? {cl.g}[y]{cl.ENDC}/n")):
         #     command = int(command) 
         #     play_selected_sound(command - 1, on_error_list=True) if (command > 1 and command < len(playlists[0][1])) is not None else None
