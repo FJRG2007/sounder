@@ -1,1 +1,0 @@
-{"general": {"sounds_folder_path": "./sounds", "quick_exit": true, "clear_on_quest": false, "developer_mode": false}, "player": {"reproduction_order": "shuffled", "crossfade_effect": true}, "macros": {"status": true, "prioritize_media_buttons": true}, "presences": {"status": true, "cdns": ["imgur", "discordWebhook", "discordBot"], "services": ["discord"]}}
