@@ -4,6 +4,7 @@ import src.lib.colors as cl
 import src.lib.data as data
 from dotenv import load_dotenv
 from src.lib.config import config
+from collections import defaultdict
 from src.integrations.macros import start_macros
 from src.integrations.worker import update_all_presences
 from src.utils.basics import cls, quest, terminal, getSoundName, set_terminal_title
@@ -19,6 +20,7 @@ previous_sound_index = 0
 paused_position = 0.0
 volume = 1.0 # Default maximum volume.
 clock = pygame.time.Clock()
+reproduction_counts = defaultdict(int)
 
 # Function to get list of playlists (directories) or sounds (files).
 def get_playlists_or_sounds():
@@ -89,12 +91,23 @@ def load_sounds():
     if not globals.current_sounds: return terminal("e", "No sounds found in the selected playlists.", exitScript=True)
     random.shuffle(globals.current_sounds) # Shuffle sounds for random playback.
 
+# def fade_out(sound):
+#     for step in range(20):
+#         sound.set_volume(sound.get_volume() * (1 - step / 20))
+#         time.sleep(3/ 20)
+
+# def fade_in(sound, target_volume):
+#     for _ in range(20):
+#         sound.volume = min(target_volume, sound.volume + target_volume / 20)
+#         time.sleep(3 / 20)
+
 def play_sound(restart=False, on_error_list=False):
     global paused_position, previous_sound_index
     # Plays the current sound.
     if globals.current_sounds:
         try:
             sound_path = globals.current_sounds[current_sound_index]
+            reproduction_counts[sound_path] += 1
             mixer.music.load(sound_path)
             mixer.music.set_volume(volume)
             if restart or paused_position == 0.0 or previous_sound_index != current_sound_index:
@@ -141,9 +154,15 @@ def next_sound():
     # Plays the next sound in the list, or a random one if shuffle is enabled.
     global current_sound_index, previous_sound_index
     previous_sound_index = current_sound_index
-    if config.player.reproduction_order == "shuffled": current_sound_index = random.choice([i for i in range(len(globals.current_sounds)) if i != previous_sound_index])
+    #fade_out(mixer.music)
+    if config.player.reproduction_order == "shuffled": 
+        current_sound_index = random.choice([
+            idx for idx, sound in enumerate(globals.current_sounds)
+            if reproduction_counts[sound] == min(reproduction_counts[sound] for sound in globals.current_sounds)
+        ])
     else: current_sound_index = (current_sound_index + 1) % len(globals.current_sounds)
     play_sound()
+    #fade_in(mixer.music, volume)
 
 def prev_sound():
     # Plays the previous sound in the list.

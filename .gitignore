@@ -9,7 +9,7 @@ __pycache__
 notes
 
 # Customs folder.
-temp
+temp/thumbnails/*
 sounds/*
 !sounds/Playlist Name/
 sounds/Playlist Name/Sound Name.mp3

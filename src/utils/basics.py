@@ -107,10 +107,10 @@ def get_sound_data(sound_path):
                     break
             else: album_art_data = None
             if album_art_data:
-                image_filename = f"temp/{response['sound_name']}.jpg"
+                image_filename = f"temp/thumbnail/{response['sound_name']}.jpg"
                 if os.path.isfile(image_filename): response["album_art_path"] = image_filename
                 else: 
-                    os.makedirs("temp", exist_ok=True)
+                    os.makedirs("temp/thumbnail", exist_ok=True)
                     with open(image_filename, "wb") as temp_file:
                         temp_file.write(album_art_data)
                     response["album_art_path"] = image_filename

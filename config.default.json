@@ -15,7 +15,9 @@
     },
     "player": {
         // Modalities of reproduction order (sequential, shuffled).
-        "reproduction_order": "sequential"
+        "reproduction_order": "sequential",
+        // Crossfade effect of transition between sounds (Coming Soon).
+        "crossfade_effect": true
     },
     // Control Sounder from your headphones or other devices.
     "macros": {
