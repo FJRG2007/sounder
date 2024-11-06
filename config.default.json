@@ -17,7 +17,9 @@
         // Modalities of reproduction order (sequential, shuffled).
         "reproduction_order": "sequential",
         // Crossfade effect of transition between sounds (Coming Soon).
-        "crossfade_effect": true
+        "crossfade_effect": true,
+        // Play next sound if no sound is detected within 5 seconds (Coming Soon).
+        "monitor_silence": true
     },
     // Control Sounder from your headphones or other devices.
     "macros": {

@@ -6,10 +6,11 @@ from dotenv import load_dotenv
 from src.lib.config import config
 from collections import defaultdict
 from src.integrations.macros import start_macros
+from src.utils.player.events import monitor_silence
 from src.integrations.worker import update_all_presences
 from src.utils.player.playlists import search_in_playlist
-from src.utils.basics import cls, quest, terminal, getSoundName, set_terminal_title, get_sounds_from_playlist
 import os, sys, time, random, signal, src.lib.globals as globals, pygame, pyfiglet, warnings, platform, threading
+from src.utils.basics import cls, quest, terminal, getSoundName, set_terminal_title, get_sounds_from_playlist, set_alias
 
 # Initialize playlists list.
 playlists = []
@@ -85,16 +86,6 @@ def load_sounds():
     if not globals.current_sounds: return terminal("e", "No sounds found in the selected playlists.", exitScript=True)
     random.shuffle(globals.current_sounds) # Shuffle sounds for random playback.
 
-# def fade_out(sound):
-#     for step in range(20):
-#         sound.set_volume(sound.get_volume() * (1 - step / 20))
-#         time.sleep(3/ 20)
-
-# def fade_in(sound, target_volume):
-#     for _ in range(20):
-#         sound.volume = min(target_volume, sound.volume + target_volume / 20)
-#         time.sleep(3 / 20)
-
 def play_sound(restart=False, on_error_list=False):
     global paused_position, previous_sound_index
     # Plays the current sound.
@@ -110,6 +101,7 @@ def play_sound(restart=False, on_error_list=False):
             else: mixer.music.play(start=paused_position)
             mixer.music.set_endevent(SOUND_END_EVENT) # Set the end event for sound completion.
             globals.is_playing = True
+            if globals.is_first_sound and config.player.monitor_silence: monitor_silence(next_sound)
             globals.stop_requested = False
             # Get sound duration in minutes and seconds.
             audio = MP3(sound_path)
@@ -231,6 +223,7 @@ if __name__ == "__main__":
     if not config.general.developer_mode: warnings.filterwarnings("ignore", category=RuntimeWarning)
     sys.stderr = open(os.devnull, "w")
     os.environ["ERRORLEVEL"] = "0"
+    set_alias()
     
     # Banner.
     cls()
@@ -249,6 +242,7 @@ if __name__ == "__main__":
     # Initialize pygame and the sound mixer.
     pygame.init()
     mixer.init(frequency=22050, size=-16, channels=2, buffer=512)
+    globals.mixer = mixer
     select_playlist()
     if "all" not in playlists:
         load_sounds()

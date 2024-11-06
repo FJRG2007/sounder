@@ -6,7 +6,7 @@ from rich import print as rprint
 from src.lib.config import config
 from rich.markdown import Markdown
 from mutagen.id3 import ID3, APIC, TIT2, TPE1
-import os, re, sys, time, ctypes, asyncio, traceback, platform, unicodedata
+import os, re, sys, time, ctypes, asyncio, traceback, platform, subprocess, unicodedata
 
 console = Console()
 
@@ -139,3 +139,9 @@ def get_sounds_from_playlist(playlist):
     except FileNotFoundError:
         terminal("e", f"The path '{playlist}' was not found.")
         return []
+    
+def set_alias():
+    system = platform.system()
+    if system in ["Linux", "Darwin"]: subprocess.run([os.getenv("SHELL", "/bin/bash"), "-c", "alias Sounder='echo -n \"\"'"], check=True)
+    elif system == "Windows": subprocess.run(["powershell", "-Command", 'function Sounder { "" | Out-Null }'], check=True)
+    else: raise OSError(f"Unsupported OS: {system}")
