@@ -187,7 +187,7 @@ def user_input_thread():
         elif command in ["n", "next"]: next_sound()
         elif command == "v": prev_sound()
         elif command == "v+": adjust_volume(0.1)
-        elif command == "v+": adjust_volume("max")
+        elif command == "v++": adjust_volume("max")
         elif command == "v-": adjust_volume(-0.1)
         elif command == ["v--", "mute"]: adjust_volume("min")
         elif command == "s": toggle_shuffle()
