@@ -1,7 +1,5 @@
 from pygame import mixer
 from mutagen.mp3 import MP3
-import src.lib.colors as cl
-import src.lib.data as data
 from dotenv import load_dotenv
 from src.lib.config import config
 from collections import defaultdict
@@ -9,8 +7,8 @@ from src.integrations.macros import start_macros
 from src.utils.player.events import monitor_silence
 from src.integrations.worker import update_all_presences
 from src.utils.player.playlists import search_in_playlist
-import os, sys, time, random, signal, src.lib.globals as globals, pygame, pyfiglet, warnings, platform, threading
 from src.utils.basics import cls, quest, terminal, getSoundName, set_terminal_title, get_sounds_from_playlist, set_alias
+import os, sys, time, random, signal, src.lib.globals as globals, src.lib.colors as cl, src.lib.data as data, pygame, pyfiglet, warnings, platform, threading
 
 # Initialize playlists list.
 playlists = []
