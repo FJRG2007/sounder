@@ -159,6 +159,9 @@ def prev_sound():
 def adjust_volume(amount):
     # Adjusts the volume by a given amount (positive or negative).
     global volume
+    if isinstance(amount, str):
+        if amount == "max": volume = 1.0
+        elif amount == "min": volume = 0.0
     volume = max(0.0, min(1.0, volume + amount)) # Ensure volume stays between 0.0 and 1.0.
     mixer.music.set_volume(volume)
     volume_percentage = int(volume * 100)
@@ -184,7 +187,9 @@ def user_input_thread():
         elif command in ["n", "next"]: next_sound()
         elif command == "v": prev_sound()
         elif command == "v+": adjust_volume(0.1)
+        elif command == "v+": adjust_volume("max")
         elif command == "v-": adjust_volume(-0.1)
+        elif command == ["v--", "mute"]: adjust_volume("min")
         elif command == "s": toggle_shuffle()
         elif command in ["l", "list"]: play_selected_sound(sound_index) if (sound_index := list_sounds(playlists[0])[1]) is not None else None
         elif command == "b":
