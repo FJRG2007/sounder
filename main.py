@@ -160,7 +160,7 @@ def adjust_volume(amount):
     if isinstance(amount, str):
         if amount == "max": volume = 1.0
         elif amount == "min": volume = 0.0
-    volume = max(0.0, min(1.0, volume + amount)) # Ensure volume stays between 0.0 and 1.0.
+        else: volume = max(0.0, min(1.0, volume + amount)) # Ensure volume stays between 0.0 and 1.0.
     mixer.music.set_volume(volume)
     volume_percentage = int(volume * 100)
     print(f"{cl.BOLD}{'🔇' if volume_percentage == 0 else '🔊'} Volume:{cl.ENDC} {volume_percentage}%")
@@ -185,7 +185,7 @@ def user_input_thread():
         elif command in ["n", "next"]: next_sound()
         elif command == "v": prev_sound()
         elif command == "v+": adjust_volume(0.1)
-        elif command == "v++": adjust_volume("max")
+        elif command in ["v++", "full blast", "all out"]: adjust_volume("max")
         elif command == "v-": adjust_volume(-0.1)
         elif command in ["v--", "mute"]: adjust_volume("min")
         elif command == "s": toggle_shuffle()
