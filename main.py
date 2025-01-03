@@ -157,10 +157,9 @@ def prev_sound():
 def adjust_volume(amount):
     # Adjusts the volume by a given amount (positive or negative).
     global volume
-    if isinstance(amount, str):
-        if amount == "max": volume = 1.0
-        elif amount == "min": volume = 0.0
-        else: volume = max(0.0, min(1.0, volume + amount)) # Ensure volume stays between 0.0 and 1.0.
+    if amount == "max": volume = 1.0
+    elif amount == "min": volume = 0.0
+    else: volume = max(0.0, min(1.0, volume + amount)) # Ensure volume stays between 0.0 and 1.0.
     mixer.music.set_volume(volume)
     volume_percentage = int(volume * 100)
     print(f"{cl.BOLD}{'🔇' if volume_percentage == 0 else '🔊'} Volume:{cl.ENDC} {volume_percentage}%")
