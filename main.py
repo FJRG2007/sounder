@@ -172,10 +172,25 @@ def handle_event(event):
     # Handles pygame events.
     if event.type == SOUND_END_EVENT and not globals.stop_requested: next_sound() # Play the next sound if stop was not requested.
 
+tips_file_content = None
+
+def load_tips_in_background():
+    global tips_file_content
+    with open("docs/tips.md", "r", encoding="utf-8") as file:
+        tips_file_content = file.read()
+
+def get_tips():
+    global tips_file_content
+    cls()
+    if not tips_file_content:
+        with open("docs/tips.md", "r", encoding="utf-8") as file:
+            tips_file_content = file.read()
+    terminal("info", tips_file_content)
+
 def user_input_thread():
     global running
     while running:
-        print("\nCommands: [p] Play Sound, [n] Next Sound, [v] Previous Sound, [v+] Increase Volume, [v-] Decrease Volume, [s] Toggle Shuffle, [l] List Sounds, [b] Back to Playlist Selection, [r] Restart Sound, [x] Stop Sound, [q] Quit")
+        print("\nCommands: [p] Play Sound, [n] Next Sound, [v] Previous Sound, [v+] Increase Volume, [v-] Decrease Volume, [s] Toggle Shuffle, [l] List Sounds, [b] Back to Playlist Selection, [r] Restart Sound, [x] Stop Sound, [t] Tips, [q] Quit")
         command = quest("Enter command", lowercase=True)
         if command.startswith("/"): command = command.replace("/", "")
         if command in ["p", "play"]: play_sound()
@@ -207,6 +222,7 @@ def user_input_thread():
         # elif command.isdigit() and getPositive(quest(f"That's not a valid command, maybe you want to choose a sound from the current playlist? {cl.g}[y]{cl.ENDC}/n")):
         #     command = int(command) 
         #     play_selected_sound(command - 1, on_error_list=True) if (command > 1 and command < len(playlists[0][1])) is not None else None
+        elif command in ["t", "tips", "tricks"]: get_tips()
         else: terminal("e", "Enter valid command.")
         time.sleep(0.1) # Small delay to prevent high CPU usage.
 
@@ -256,6 +272,7 @@ if __name__ == "__main__":
     input_thread = threading.Thread(target=user_input_thread)
     input_thread.start()
     start_macros()
+    threading.Thread(target=load_tips_in_background, daemon=True).start()
     try:
         os.system("Sounder")
         while running:
