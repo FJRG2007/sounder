@@ -102,11 +102,9 @@ def play_sound(restart=False, on_error_list=False):
             if globals.is_first_sound and config.player.monitor_silence: monitor_silence(next_sound)
             globals.stop_requested = False
             # Get sound duration in minutes and seconds.
-            audio = MP3(sound_path)
-            duration_minutes = int(audio.info.length // 60)
-            duration_seconds = int(audio.info.length % 60)
+            audio_length = MP3(sound_path).info.length
             sound_name = getSoundName(os.path.basename(sound_path))
-            print(f"{cl.BOLD}⏯️ Currently Playing:{cl.ENDC} {sound_name} {cl.g}[{duration_minutes}:{duration_seconds:02d} min]{cl.ENDC}")
+            print(f"{cl.BOLD}⏯️ Currently Playing:{cl.ENDC} {sound_name} {cl.g}[{int(audio_length // 60)}:{int(audio_length % 60):02d} min]{cl.ENDC}")
             set_terminal_title(f"{sound_name} | Sounder")
             update_all_presences(True, sound_name=sound_name, sound_path=globals.current_sounds[current_sound_index])
         except pygame.error as e: terminal("e", f"Error loading or playing sound: {e}")
@@ -154,12 +152,12 @@ def prev_sound():
     current_sound_index = (current_sound_index - 1) % len(globals.current_sounds)
     play_sound()
 
-def adjust_volume(amount):
+def adjust_volume(amount, set_to = False):
     # Adjusts the volume by a given amount (positive or negative).
     global volume
     if amount == "max": volume = 1.0
     elif amount == "min": volume = 0.0
-    else: volume = max(0.0, min(1.0, volume + amount)) # Ensure volume stays between 0.0 and 1.0.
+    else: volume = max(0.0, min(1.0, amount if set_to else volume + amount)) # Ensure volume stays between 0.0 and 1.0.
     mixer.music.set_volume(volume)
     volume_percentage = int(volume * 100)
     print(f"{cl.BOLD}{'🔇' if volume_percentage == 0 else '🔊'} Volume:{cl.ENDC} {volume_percentage}%")
@@ -187,6 +185,10 @@ def user_input_thread():
         elif command in ["v++", "full blast", "all out"]: adjust_volume("max")
         elif command == "v-": adjust_volume(-0.1)
         elif command in ["v--", "mute"]: adjust_volume("min")
+        elif command.startswith("v") and command[1:].isdigit():
+            volume_percentage = int(command[1:])
+            if 0 <= volume_percentage <= 100: adjust_volume(volume_percentage / 100, set_to=True)
+            else: terminal("e", "Volume must be between 0% and 100%.")
         elif command == "s": toggle_shuffle()
         elif command in ["l", "list"]: play_selected_sound(sound_index) if (sound_index := list_sounds(playlists[0])[1]) is not None else None
         elif command == "b":
