@@ -42,3 +42,9 @@ $ python main.py
 - Sound search system in the current playlist.
 - Direct integration with Discord and Macros for device control.
 - Customized playback order for the user.
+
+#### License
+The founder of the project, [FJRG2007](https://github.com/FJRG2007/), reserves the right to modify the license at any time.
+This project is licensed under the terms of the [GNU Affero General Public License](./LICENSE).
+
+<p align="right"><a href="#top">Back to top 🔼</a></p>
