@@ -42,7 +42,8 @@ def list_playlists():
 def list_sounds(playlist, sound_choice=None):
     global current_sound_index
     globals.current_sounds = [os.path.join(playlist, sound) for sound in get_sounds_from_playlist(playlist)]
-    print(f"\nSounds in {playlist.replace("\\", "/").rsplit("/", 1)[-1]}:")
+    cls()
+    print(f"{cl.BOLD}🎶 Sounds in {playlist.replace("\\", "/").rsplit("/", 1)[-1]}:{cl.ENDC}")
     for i, sound in enumerate(globals.current_sounds):
         print(f"{cl.b}[{cl.w}{i+1}{cl.b}]{cl.w} {getSoundName(sound)}")
         # Add separator for visual clarity every 3 items.
@@ -54,7 +55,7 @@ def list_sounds(playlist, sound_choice=None):
             sound_index = int(sound_choice) - 1
             if 0 <= sound_index < len(globals.current_sounds): return globals.current_sounds, sound_index
             else: terminal("e", "Invalid sound selection. Please choose a number within the range.")
-        elif sound_choice == "": return globals.current_sounds, 0
+        elif sound_choice == "": return None, None
         else: terminal("e", "Invalid input. Please enter a number or press Enter to skip.")
         sound_choice = None
 
@@ -105,10 +106,10 @@ def play_sound(restart=False, on_error_list=False):
             audio_length = MP3(sound_path).info.length
             sound_name = getSoundName(os.path.basename(sound_path))
             print(f"{cl.BOLD}⏯️ Currently Playing:{cl.ENDC} {sound_name} {cl.g}[{int(audio_length // 60)}:{int(audio_length % 60):02d} min]{cl.ENDC}")
-            set_terminal_title(f"{sound_name} | Sounder")
+            set_terminal_title(sound_name)
             update_all_presences(True, sound_name=sound_name, sound_path=globals.current_sounds[current_sound_index])
         except pygame.error as e: terminal("e", f"Error loading or playing sound: {e}")
-        except Exception as e: 
+        except Exception as e:
             terminal("e", f"Error playing sound: {e}")
             if on_error_list: play_selected_sound(sound_index) if (sound_index := list_sounds(playlists[0])[1]) is not None else None
     else: terminal("e", "No sounds to play.")
@@ -152,7 +153,7 @@ def prev_sound():
     current_sound_index = (current_sound_index - 1) % len(globals.current_sounds)
     play_sound()
 
-def adjust_volume(amount, set_to = False):
+def adjust_volume(amount, set_to=False):
     # Adjusts the volume by a given amount (positive or negative).
     global volume
     if amount == "max": volume = 1.0
@@ -161,10 +162,12 @@ def adjust_volume(amount, set_to = False):
     mixer.music.set_volume(volume)
     volume_percentage = int(volume * 100)
     print(f"{cl.BOLD}{'🔇' if volume_percentage == 0 else '🔊'} Volume:{cl.ENDC} {volume_percentage}%")
+    config.player.volume = volume
+    config.save_config()
 
 def toggle_shuffle():
     # Toggles between shuffle mode and sequential mode.
-    config.player.reproduction_order =  "sequential" if config.player.reproduction_order == "shuffled" else "shuffled"
+    config.player.reproduction_order = "sequential" if config.player.reproduction_order == "shuffled" else "shuffled"
     config.save_config()
     print(f"{cl.BOLD}🔀 Playback mode:{cl.ENDC} {'Shuffle' if config.player.reproduction_order == "shuffled" else 'Sequential'}")
 

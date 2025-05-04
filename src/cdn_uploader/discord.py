@@ -3,7 +3,7 @@ from discord.ext import commands
 
 def send_image_to_discord_via_webhook(file_path):
     with open(file_path, "rb") as f:
-        response = requests.post(os.getenv("DISCORD_WEBHOOK_URL"), files={"file": f})
+        response = requests.post(os.getenv("DISCORD_WEBHOOK_URL"), files={ "file": f })
     response.raise_for_status()
     return response.json().get("attachments", [{}])[0].get("url")
 

@@ -22,7 +22,24 @@ def coloredText(word, hex_color) -> str:
         return f"\033[38;2;{rgb[0]};{rgb[1]};{rgb[2]}m{str(word)}\033[0m"
     except: return word
 
-def quest(prompt, newline=False, lowercase=False, tab=False, format_type=str):
+"""
+    Prompt the user for input with customizable formatting options.
+
+    Args:
+        prompt (str): The message displayed to the user as the input prompt.
+        newline (bool, optional): Whether to add a newline before the prompt. Defaults to False.
+        lowercase (bool, optional): Whether to convert the input to lowercase (only if format_type is str). Defaults to False.
+        tab (bool, optional): Whether to add a tab before the prompt. Defaults to False.
+        format_type (type, optional): The type to which the input should be converted. Defaults to str.
+
+    Returns:
+        The user's input converted to the specified format_type.
+
+    Raises:
+        ValueError: If the input cannot be converted to the specified format_type.
+        EOFError: If there is an unexpected end of input.
+"""
+def quest(prompt, newline=False, lowercase=False, tab=False, format_type=str):    
     prefix = f"\n" if newline else ""
     prefix += f"\t" if tab else ""
     while True:
@@ -126,6 +143,8 @@ def get_sound_data(sound_path):
 
 def set_terminal_title(title: str):
     system = platform.system()
+    title = title.strip()
+    if title != "Sounder": title += " | Sounder"
     if system == "Windows": ctypes.windll.kernel32.SetConsoleTitleW(title)
     elif system in ["Linux", "Darwin"]: print(f"\033]0;{title}\007", end="", flush=True)
     else: raise OSError(f"Unsupported OS: {system}")
