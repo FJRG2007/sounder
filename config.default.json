@@ -35,6 +35,7 @@
         "status": true,
         // Set your preferred preference order.
         "cdns": [
+            "catbox",
             "imgur",
             "discordWebhook",
             "discordBot"
