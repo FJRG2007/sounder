@@ -8,7 +8,7 @@ from src.utils.player.events import monitor_silence
 from src.integrations.worker import update_all_presences
 from src.utils.player.playlists import search_in_playlist
 from src.utils.basics import cls, quest, terminal, getSoundName, set_terminal_title, get_sounds_from_playlist, set_alias
-import os, sys, time, random, signal, src.lib.globals as globals, src.lib.colors as cl, src.lib.data as data, pygame, pyfiglet, warnings, platform, threading
+import os, sys, time, random, signal, src.lib.globals as globals, src.lib.colors as cl, src.lib.data as data, pygame, logging, pyfiglet, warnings, platform, threading
 
 # Initialize playlists list.
 playlists = []
@@ -243,7 +243,12 @@ if __name__ == "__main__":
     # Production only.
 
     # Mute errors of integrations by shutdown or upgrade.
-    if not config.general.developer_mode: warnings.filterwarnings("ignore", category=RuntimeWarning)
+
+    if config.general.developer_mode: logging.basicConfig(level=logging.DEBUG, format='[%(levelname)s] %(message)s')
+    else:
+        logging.basicConfig(level=logging.CRITICAL)
+        warnings.filterwarnings("ignore", category=RuntimeWarning)
+        
     sys.stderr = open(os.devnull, "w")
     os.environ["ERRORLEVEL"] = "0"
     set_alias()

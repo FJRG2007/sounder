@@ -1,5 +1,5 @@
-import os, requests, threading
 from src.utils.basics import terminal
+import os, requests, logging, threading
 
 def send_image_to_catbox(image_path, delete_after_seconds=60):
     try:
@@ -16,7 +16,7 @@ def send_image_to_catbox(image_path, delete_after_seconds=60):
 
         if response.status_code == 200:
             image_url = response.text.strip()
-            threading.Timer(delete_after_seconds, terminal, args=["i", "Auto-delete simulated for Catbox (not supported)."]).start()
+            threading.Timer(delete_after_seconds, lambda: logging.info("Auto-delete simulated for Catbox (not supported).")).start()
             return image_url
         else:
             terminal("e", f"Error uploading image: {response.status_code} | {response.text}")

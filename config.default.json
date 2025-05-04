@@ -36,6 +36,7 @@
         // Set your preferred preference order.
         "cdns": [
             "catbox",
+            "cloudinary",
             "imgur",
             "discordWebhook",
             "discordBot"

@@ -10,6 +10,7 @@ def upload_image_to_cdn(image_path, delete_after_seconds=60):
     DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
     for cdn in config.presences.cdns:
         if cdn == "catbox": return get_function("catbox", "send_image_to_catbox")(image_path, delete_after_seconds)
+        if cdn == "cloudinary": return get_function("cloudinary", "send_image_to_cloudinary")(image_path, delete_after_seconds)
         if cdn == "imgur" and IMGUR_CLIENT_ID and len(IMGUR_CLIENT_ID) > 5: return get_function("imgur", "send_image_to_imgur")(image_path, delete_after_seconds)
         elif cdn == "discordWebHook" and DISCORD_WEBHOOK_URL and len(DISCORD_WEBHOOK_URL) > 7: return get_function("discord", "send_image_to_discord_via_webhook")(image_path)
         elif cdn == "discordBot" and DISCORD_BOT_TOKEN and len(DISCORD_BOT_TOKEN) > 7: return get_function("discord", "send_image_to_discord_via_bot")(image_path)
