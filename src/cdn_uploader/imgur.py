@@ -52,7 +52,7 @@ def delete_image_from_cdn(delete_hash):
     try:
         IMGUR_CLIENT_ID = os.getenv("IMGUR_CLIENTS_ID")
         if not IMGUR_CLIENT_ID or len(IMGUR_CLIENT_ID) < 5:
-            terminal("e", "Enter a valid IMGUR Client ID")
+            terminal("e", "Enter a valid IMGUR Client ID.")
             return False
         response = requests.delete(f"https://api.imgur.com/3/image/{delete_hash}", headers={ "Authorization": f"Client-ID {IMGUR_CLIENT_ID}" })
         if response.status_code == 200: return True
