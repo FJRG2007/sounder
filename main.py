@@ -3,6 +3,8 @@ from mutagen.mp3 import MP3
 from dotenv import load_dotenv
 from src.lib.config import config
 from collections import defaultdict
+from textual.widgets import Markdown
+from textual.app import App, ComposeResult
 from src.integrations.macros import start_macros
 from src.utils.player.events import monitor_silence
 from src.integrations.worker import update_all_presences
@@ -175,12 +177,21 @@ def handle_event(event):
     # Handles pygame events.
     if event.type == SOUND_END_EVENT and not globals.stop_requested: next_sound() # Play the next sound if stop was not requested.
 
+config_tips_file_content = None
 tips_file_content = None
 
 def load_tips_in_background():
     global tips_file_content
     with open("docs/tips.md", "r", encoding="utf-8") as file:
         tips_file_content = file.read()
+
+def get_config_tips():
+    with open("docs/config_tips.md", "r", encoding="utf-8") as file:
+        content = file.read()
+        class MarkdownExampleApp(App):
+            def compose(self) -> ComposeResult:
+                yield Markdown(content)
+        MarkdownExampleApp().run()
 
 def get_tips():
     global tips_file_content
@@ -209,7 +220,8 @@ def user_input_thread():
             else: terminal("e", "Volume must be between 0% and 100%.")
         elif command == "s": toggle_shuffle()
         elif command in ["l", "list"]: play_selected_sound(sound_index) if (sound_index := list_sounds(playlists[0])[1]) is not None else None
-        elif command in ["log", "logs"]: show_log_markdown()
+        elif command in ["log", "logs", "logger"]: show_log_markdown()
+        elif command in ["config tips", "config info", "cdn info"]: get_config_tips()
         elif command == "b":
             select_playlist()
             if "all" not in playlists:
