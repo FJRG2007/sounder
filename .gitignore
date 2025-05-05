@@ -15,6 +15,6 @@ sounds/*
 !sounds/Playlist Name/
 sounds/Playlist Name/Sound Name.mp3
 
-# IDE configurations.
+# IDEs configurations.
 .idea
 .vscode
