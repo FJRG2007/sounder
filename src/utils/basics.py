@@ -71,7 +71,9 @@ def setColor(v):
 def terminal(typeMessage, string="", exitScript=False, clear="n", newline=True, timer=False) -> None:
     if (clear == "b" or typeMessage == "iom"): cls()
     if isinstance(typeMessage, str):
-        if typeMessage == "e": print(f"\n{cl.R} ERROR {cl.w} {string}") # X or ❌
+        if typeMessage == "e": 
+            print(f"\n{cl.R} ERROR {cl.w} {string}") # X or ❌
+            add_log_line(f"ERROR: {string}")
         if typeMessage == "s": print(f"\n{cl.g}✅ {string}{cl.w}") # ✓ or ✅
         if typeMessage == "i": rprint(f"{'\n' if newline else ''}[cyan]{string}[/cyan]")
         if typeMessage == "w": rprint(f"\n[bold yellow]Warning:[/bold yellow] [yellow]{string}[/yellow]")
