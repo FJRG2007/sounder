@@ -35,12 +35,12 @@
         "status": true,
         // Set your preferred preference order.
         "cdns": [
-            "fileio",
-            "catbox",
-            "cloudinary",
-            "imgur",
-            "discordWebhook",
-            "discordBot"
+            "fileio", // Sometimes it fails due to FileIO crashes.
+            "catbox", // Sometimes it fails due to Catbox crashes.
+            "cloudinary", // Untested.
+            "imgur", // Recommended but has a limit.
+            "discordWebhook", // It usually fails (under revision).
+            "discordBot" // Untested.
         ],
         // In case you have the auth configured; you will be able to share what you listen to!
         "services": [
