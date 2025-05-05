@@ -2,8 +2,8 @@ import os, time
 from pypresence import Presence
 from src.lib.config import config
 from src.lib.ignored import ignored_errors
-from src.utils.basics import terminal, get_sound_data
 from src.cdn_uploader.worker import upload_image_to_cdn
+from src.utils.basics import terminal, get_sound_data, add_log_line
 
 # Global variable to hold the RPC instance.
 rpc = None
@@ -31,11 +31,13 @@ def update_discord_presence(sound_name, sound_path, retries=2):
     if sound_data["duration"] is None: return
     while retries >= 0:
         try:
+            image = upload_image_to_cdn(sound_data["album_art_path"], sound_data["duration"] + 15)
+            add_log_line(f"Updating Discord presence: {sound_data['sound_name']} by {sound_data['artist']} with image URL {image}")
             rpc.update(
                 state=sound_data["sound_name"],
                 large_text=sound_data["sound_name"],
                 small_text=sound_data["sound_name"],
-                large_image=upload_image_to_cdn(sound_data["album_art_path"], sound_data["duration"] + 15),
+                large_image=image,
                 details=sound_data["artist"],
                 start=int(time.time()),
                 end=int(time.time()) + sound_data["duration"],

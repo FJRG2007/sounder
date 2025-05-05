@@ -8,7 +8,7 @@ def get_function(module_name, function_name="main"):
     return getattr(importlib.import_module(f"src.cdn_uploader.{module_name}"), function_name)
 
 def upload_image_to_cdn(image_path, delete_after_seconds=60):
-    IMGUR_CLIENT_ID = os.getenv("IMGUR_CLIENT_ID")
+    IMGUR_CLIENTS_ID = os.getenv("IMGUR_CLIENTS_ID")
     DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
     DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
     
@@ -19,7 +19,7 @@ def upload_image_to_cdn(image_path, delete_after_seconds=60):
             if cdn == "fileio": result = get_function("fileio", "send_image_to_fileio")(image_path, delete_after_seconds)
             elif cdn == "catbox": result = get_function("catbox", "send_image_to_catbox")(image_path, delete_after_seconds)
             elif cdn == "cloudinary" and os.getenv("CLOUDINARY_CLOUD_NAME") and os.getenv("CLOUDINARY_API_KEY") and os.getenv("CLOUDINARY_API_SECRET"): result = get_function("cloudinary", "send_image_to_cloudinary")(image_path, delete_after_seconds)
-            elif cdn == "imgur" and IMGUR_CLIENT_ID and len(IMGUR_CLIENT_ID) > 5: result = get_function("imgur", "send_image_to_imgur")(image_path, delete_after_seconds)
+            elif cdn == "imgur" and IMGUR_CLIENTS_ID and len(IMGUR_CLIENTS_ID) > 5: result = get_function("imgur", "send_image_to_imgur")(image_path, delete_after_seconds)
             elif cdn == "discordWebhook" and DISCORD_WEBHOOK_URL and len(DISCORD_WEBHOOK_URL) > 7: result = get_function("discord", "send_image_to_discord_via_webhook")(image_path)
             elif cdn == "discordBot" and DISCORD_BOT_TOKEN and len(DISCORD_BOT_TOKEN) > 7: result = get_function("discord", "send_image_to_discord_via_bot")(image_path)
             else: continue
