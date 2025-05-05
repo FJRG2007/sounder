@@ -1,6 +1,8 @@
 import src.lib.colors as cl
 from mutagen.mp3 import MP3
 from rich.panel import Panel
+from collections import deque
+from datetime import datetime
 from rich.console import Console
 from rich import print as rprint
 from src.lib.config import config
@@ -164,3 +166,12 @@ def set_alias():
     if system in ["Linux", "Darwin"]: subprocess.run([os.getenv("SHELL", "/bin/bash"), "-c", "alias Sounder='echo -n \"\"'"], check=True)
     elif system == "Windows": subprocess.run(["powershell", "-Command", 'function Sounder { "" | Out-Null }'], check=True)
     else: raise OSError(f"Unsupported OS: {system}")
+
+log_lines = deque(maxlen=100)
+
+def add_log_line(line: str):
+    log_lines.append(f"[<span style='color:blue'>{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</span>] {line}")
+
+def show_log_markdown():
+    cls()
+    terminal("info", f"""### Last 100 lines of the log:\n\n{"\n".join(f"- {line}" for line in log_lines)}""", clear=True)

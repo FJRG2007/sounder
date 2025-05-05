@@ -12,7 +12,7 @@ def send_image_to_catbox(image_path, delete_after_seconds=60):
             data = {
                 "reqtype": "fileupload"
             }
-            response = requests.post("https://catbox.moe/user/api.php", data=data, files=files)
+            response = requests.post("https://catbox.moe/user/api.php", data=data, files=files, timeout=5)
 
         if response.status_code == 200:
             image_url = response.text.strip()
@@ -21,6 +21,9 @@ def send_image_to_catbox(image_path, delete_after_seconds=60):
         else:
             terminal("e", f"Error uploading image: {response.status_code} | {response.text}")
             return None
+    except requests.exceptions.Timeout:
+        terminal("e", f"Timeout after 5 seconds.")
+        return None
     except Exception as e:
         terminal("e", f"Unexpected error: {e}")
         return None

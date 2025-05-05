@@ -7,7 +7,7 @@ from src.integrations.macros import start_macros
 from src.utils.player.events import monitor_silence
 from src.integrations.worker import update_all_presences
 from src.utils.player.playlists import search_in_playlist
-from src.utils.basics import cls, quest, terminal, getSoundName, set_terminal_title, get_sounds_from_playlist, set_alias
+from src.utils.basics import cls, quest, terminal, getSoundName, set_terminal_title, get_sounds_from_playlist, set_alias, show_log_markdown
 import os, sys, time, random, signal, src.lib.globals as globals, src.lib.colors as cl, src.lib.data as data, pygame, logging, pyfiglet, warnings, platform, threading
 
 # Initialize playlists list.
@@ -209,6 +209,7 @@ def user_input_thread():
             else: terminal("e", "Volume must be between 0% and 100%.")
         elif command == "s": toggle_shuffle()
         elif command in ["l", "list"]: play_selected_sound(sound_index) if (sound_index := list_sounds(playlists[0])[1]) is not None else None
+        elif command in ["log", "logs"]: show_log_markdown()
         elif command == "b":
             select_playlist()
             if "all" not in playlists:

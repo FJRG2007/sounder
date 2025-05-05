@@ -1,5 +1,5 @@
-import json,importlib
 from types import SimpleNamespace
+import os, json, shutil, importlib
 
 def get_function(function_name="main"):
     return getattr(importlib.import_module(f"src.utils.basics"), function_name)
@@ -10,7 +10,12 @@ class Config:
     config: SimpleNamespace
 
     def __init__(self, path: str = "./config.json"):
-        # Read config.json file.
+        self.path = path
+        # If config.json doesn't exist, copy it from defaults.
+        if not os.path.exists(self.path):
+            try: shutil.copy("./defaults/config.json", self.path)
+            except Exception as e: get_function("terminal")("e", f"Failed to copy default config: {e}", exitScript=True)
+
         with open("./config.json", "r") as file:
             upd = file.read()
             self.config = json.loads(upd, object_hook=lambda d: SimpleNamespace(**d))
@@ -33,14 +38,14 @@ class Config:
         upd = self._to_dict(self.config)
         with open(self.path, "w") as file:
             file.write(upd)
-        # update self.config
+        # Update self.config
         self.read_config()
         return self.config
 
     def _to_dict(self, obj: SimpleNamespace):
         return json.dumps(obj, default=lambda o: o.__dict__)
 
-config = None
+config = "loading"
 
 try: config = Config()
 except Exception as e: get_function("terminal")("e", e, exitScript=True)

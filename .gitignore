@@ -11,6 +11,7 @@ notes
 # Customs folder.
 temp
 sounds/*
+/config.json
 !sounds/Playlist Name/
 sounds/Playlist Name/Sound Name.mp3
 
