@@ -1,11 +1,10 @@
 import requests, threading
-from src.utils.basics import terminal
+from src.utils.basics import terminal, add_log_line
 
 def send_image_to_fileio(image_path, delete_after_seconds=60):
     try:
         with open(image_path, "rb") as image_file:
             response = requests.post("https://file.io", files={ "file": image_file })
-
         if response.status_code == 200:
             try:
                 data = response.json()
@@ -19,7 +18,6 @@ def send_image_to_fileio(image_path, delete_after_seconds=60):
         else:
             try: terminal("e", f"Error uploading image: {response.json()}")
             except ValueError: terminal("e", f"Error uploading image: Non-JSON response with status {response.status_code}")
-
         return None
     except IOError as e:
         terminal("e", f"Error opening file: {e}")
@@ -35,12 +33,11 @@ def delete_image_from_fileio(file_id):
             try:
                 data = response.json()
                 if data.get("success"): return True
-                else: terminal("e", f"Error deleting image: {data}")
+                else: add_log_line(f"Error deleting image: {data}")
             except ValueError: terminal("e", "Empty or invalid JSON in delete response.")
         else:
             try: terminal("e", f"Error deleting image: {response.json()}")
             except ValueError: terminal("e", f"Error deleting image: Non-JSON response with status {response.status_code}")
-
         return False
     except requests.RequestException as e:
         terminal("e", f"Request error: {e}")

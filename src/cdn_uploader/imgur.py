@@ -26,7 +26,6 @@ def send_image_to_imgur(image_path, delete_after_seconds=60):
                     headers={ "Authorization": f"Client-ID {client_id}" },
                     files={ "image": ("image.jpg", image_file, "image/jpeg") }
                 )
-
             if response.status_code == 200:
                 data = response.json()["data"]
                 threading.Timer(delete_after_seconds, delete_image_from_cdn, args=[data["deletehash"]]).start()
@@ -37,14 +36,12 @@ def send_image_to_imgur(image_path, delete_after_seconds=60):
             else:
                 terminal("e", f"Upload failed with {client_id}: {response.json()}")
                 break
-
         except IOError as e:
             terminal("e", f"Error opening file: {e}")
             return None
         except Exception as e:
             terminal("e", f"Unexpected error: {e}")
             return None
-
     terminal("e", "All Imgur Client IDs exhausted or failed.")
     return None
     
@@ -57,7 +54,7 @@ def delete_image_from_cdn(delete_hash):
         response = requests.delete(f"https://api.imgur.com/3/image/{delete_hash}", headers={ "Authorization": f"Client-ID {IMGUR_CLIENT_ID}" })
         if response.status_code == 200: return True
         else:
-            terminal("e", f"Error deleting image: {response.json()}")
+            add_log_line("e", f"Error deleting image: {response.json()}")
             return False
     except requests.RequestException as e:
         terminal("e", f"Request error: {e}")
