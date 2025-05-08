@@ -54,7 +54,7 @@ def delete_image_from_cdn(delete_hash):
         response = requests.delete(f"https://api.imgur.com/3/image/{delete_hash}", headers={ "Authorization": f"Client-ID {IMGUR_CLIENT_ID}" })
         if response.status_code == 200: return True
         else:
-            add_log_line("e", f"Error deleting image: {response.json()}")
+            add_log_line(f"Error deleting image: {response.json()}")
             return False
     except requests.RequestException as e:
         terminal("e", f"Request error: {e}")

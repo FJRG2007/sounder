@@ -28,11 +28,11 @@ def delete_image_from_cdn(public_id):
     try:
         result = cloudinary.uploader.destroy(public_id)
         if result.get("result") == "ok":
-            add_log_line("i", f"Image '{public_id}' deleted from Cloudinary.")
+            add_log_line(f"Image '{public_id}' deleted from Cloudinary.")
             return True
         else:
-            add_log_line("e", f"Error deleting image: {result}")
+            add_log_line(f"Error deleting image: {result}")
             return False
     except Exception as e:
-        terminal("e", f"Unexpected error during delete: {e}")
+        terminal(f"Unexpected error during delete: {e}")
         return False
