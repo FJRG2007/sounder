@@ -1,14 +1,14 @@
 cff-version: 1.2.0
 title: Sounder
-message: "Quickly play local music/sound."
+message: "Quickly play local music/sound in your terminal."
 type: software
 authors:
   - given-names: FJRG2007
     email: fjrg2007@tpeoficial.com
 repository-code: 'https://github.com/FJRG2007/sounder'
-url: 'https://status.tpeoficial.com/development'
+url: 'https://fjrg2007.tpeoficial.com/'
 abstract: >-
-  Quickly play local music/sound.
+  Quickly play local music/sound in your terminal.
 keywords:
   - sound
   - player
